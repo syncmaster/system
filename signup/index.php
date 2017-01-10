@@ -11,12 +11,10 @@ $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 $repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
 $signup = "";
-$validateErr = array ( );
-$sqlemailcheck = "SELECT `email` FROM users WHERE `email` = '" .$email. "' ";
-$emailresult = mysqli_query($connect,$sqlemailcheck);
-$rows = mysqli_num_rows($emailresult);
+$validateErr = array();
 
-if(isset($_POST['signup'])) {
+
+if (isset($_POST['signup'])) {
 	if (empty($firstname)) {
 		$validateErr['firstname'] = "Please <b>Enter</b> your <b>FirstName</b> " ;
 	} else if ((mb_strlen($firstname)) < 6 || (mb_strlen($firstname) > 20)){
@@ -28,32 +26,44 @@ if(isset($_POST['signup'])) {
 	} else if ((mb_strlen($lastname)) < 6 || (mb_strlen($lastname) > 20)) {
 		$validateErr['lastname'] = "Please <b>Enter</b> your <b>Lastname</b> between 6 and 20 symbols ";
 	}
+
 	if (empty($age)) {
 		$validateErr['age'] = "Please <b>Enter</b> your <b>Ages</b>! ";
 	} else if (($age <= 13) || ($age > 99)) {
 		$validateErr['age'] = "Please <b>Enter</b> ages between <b>13 and 99</b>! ";
 	}
+
 	if (empty($country)) {
 		$validateErr['country'] = "Please choose your <b>Country</b>!";
 	}
+
 	if (empty($city)) {
 		$validateErr['city'] = "Please <b>Enter</b> your <b>City</b>! ";
-	} else if (mb_strlen($city)> 30){
+	} else if (mb_strlen($city)> 30) {
 		$validateErr['city'] = "Please <b>Enter</b> <b>city</b> less than <b>30 symbols</b>!";
 	}
+
 	if (empty($address)) {
 		$validateErr['address'] = "Please <b><b>Enter</b></b> your <b>Address</b>! ";
 	}
-	if (!filter_var($email,FILTER_VALIDATE_EMAIL) === true){
+
+	if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$validateErr['email'] = "Your <b>E-mail</b> is <b>not valid</b>! ";
 	} else if (empty($email)) {
 		$validateErr['email'] = "Please <b>Enter</b> your <b>E-mail Address</b>! ";
-	} else if ($rows >0) {
-		$validateErr['email'] = "Your <b>E-mail</b> Address is <b>already used</b>!";
+	} else  {
+		$sql = "SELECT `email`
+			FROM users
+			WHERE `email` = '" . mysqli_real_escape_string($connect, $email) . "' ";
+		$emailresult = mysqli_query($connect, $sql);
+		if (mysqli_num_rows($emailresult)) {
+			$validateErr['email'] = "E-mail address is already registered";
+		}
 	}
-	if (empty($password) || (empty($password))) {
+
+	if (empty($password) || empty($repassword)) {
 		$validateErr['password'] = "Please <b>Enter</b> your <b>Password</b>! ";
-	} else if (!($password == $repassword)) {
+	} else if ($password !== $repassword) {
 		$validateErr['password'] =  "Your <b>password</b> did <b>not match</b>! ";
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
@@ -61,7 +71,6 @@ if(isset($_POST['signup'])) {
 
 	if (!count($validateErr)) {
 		$password = md5($password);
-
 		$sql = "
 			INSERT INTO users (
 				`firstname`,
@@ -73,32 +82,25 @@ if(isset($_POST['signup'])) {
 				`email`,
 				`password`
 			) VALUES (
-				'".mysqli_real_escape_string($connect,$firstname)."',
-				'".mysqli_real_escape_string($connect,$lastname)."',
-				'".mysqli_real_escape_string($connect,$age)."',
-				'".mysqli_real_escape_string($connect,$country)."',
-				'".mysqli_real_escape_string($connect,$city)."',
-				'".mysqli_real_escape_string($connect,$address)."',
-				'".mysqli_real_escape_string($connect,$email)."',
-				'".mysqli_real_escape_string($connect,$password)."'
+				'" .mysqli_real_escape_string($connect, $firstname). "',
+				'" .mysqli_real_escape_string($connect, $lastname). "',
+				'" .mysqli_real_escape_string($connect, $age). "',
+				'" .mysqli_real_escape_string($connect, $country). "',
+				'" .mysqli_real_escape_string($connect, $city). "',
+				'" .mysqli_real_escape_string($connect, $address). "',
+				'" .mysqli_real_escape_string($connect, $email). "',
+				'" .mysqli_real_escape_string($connect, $password). "'
 			)
 		";
-
 		if (mysqli_query($connect, $sql)) {
 			$signup = "Your account had been created..!";
 			/*header("refresh: 10 ;url=login.php");*/
-			
 		} else {
 			$signupErr = "something went wrong";
 		}
-
 	}
-
-
-
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -138,7 +140,7 @@ if(isset($_POST['signup'])) {
 							<label class="control-label col-sm-4">LastName:</label>
 							<div class="col-sm-6">
 								<input type="text" class="form-control" name="lastname"/ value="<?=$lastname?>">
-								<!-- <?php if(isset($validateErr['lastname'])) : ?>
+								<!--<?php if(isset($validateErr['lastname'])) : ?>
 									<div class="help-block alert alert-danger"><?=$validateErr['lastname'] ?></div>
 								<?php endif ?> -->
 							</div>
@@ -225,7 +227,7 @@ if(isset($_POST['signup'])) {
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
-					<div class="row">	
+					<div class="row">
 						<div class="form-group">
 							<label class="control-label col-sm-4">Repeat Password</label>
 							<div class="col-sm-6">
@@ -233,7 +235,7 @@ if(isset($_POST['signup'])) {
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
-					</div>					
+					</div>
 					<div class="row">
 						<div class="form-group center-block">
 							<div class="col-xs-1 col-sm-4"></div>
@@ -242,8 +244,8 @@ if(isset($_POST['signup'])) {
 								<button type="reset" class="btn btn-primary" name="reset">Reset</button>
 							</div>
 							<div class="col-sm-2"></div>
-						</div>			
-					</div>	
+						</div>
+					</div>
 					<div class="row">
 						<div class="form-group center-block">
 							<div class="col-sm-2"></div>
@@ -268,7 +270,7 @@ if(isset($_POST['signup'])) {
 						</div>
 					</div>
 				</form>
-			</div>	
+			</div>
 			<div class="col-md-3 col-sm-2"></div>
 		</div>
 	</div>
