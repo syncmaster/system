@@ -1,16 +1,16 @@
 <?php
 
 include 'config.php';
-
+$emailErr = array ( );
 
 if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? $_POST['email'] : '';
 	$password = isset($_POST['password']) ? $_POST['password'] : '';
 
 	if (empty($email) || empty($password)) {
-		echo "Please enter the email and password fields";
+		$emailErr['empty'] = "Please enter the email and password fields";
 	}else if  (!filter_var($email,FILTER_VALIDATE_EMAIL) === true){
-		$emailErr = "Your e-mail address is not valid!" ;
+		$emailErr['valid'] = "Your e-mail address is not valid!" ;
 	} else {
 
 		$password = md5($password);
@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
 
 		if (($result = mysqli_query($connect, $sql))) {
 			if (!mysqli_num_rows($result)) {
-				$loginErr = "Invalid user! Your information is not in our database";
+				$emailErr['user'] = "Invalid user! Your information is not in our database";
 			} else {
 				while ($rows = mysqli_fetch_assoc($result)) {
 					$loginuser = "Hello, ".$rows['firstname']." ".$rows['lastname']."<br />\n";
@@ -43,49 +43,68 @@ if (isset($_POST['submit'])) {
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="widrh=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<style>
+		.signup{
+			background-color:#B0C4DE;
+		}
+		.row{
+			margin:0;
+			padding:0;
+		}
+	</style>
 </head>
 <body>
 	<div id="container">
 		<div class="row">
-			<div class="col-sm-4"></div>
-			<div class="col-sm-4">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-6 col-xs-12">
 				<form action="login.php" method="post" class="form-horizontal" name="register">
-					<div class="form-group">
-						<label class="control-label col-sm-2">Email:</label>
-						<div class="col-sm-6">
-							<input type="text" class="form-control" name="email" value="<?php echo htmlspecialchars(isset($_POST['email']) ? $_POST['email'] : ''); ?>" />
+					<div class="row">
+						<div class="form-group">
+							<label class="control-label col-sm-3">Email:</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" name="email" value="<?php echo htmlspecialchars(isset($_POST['email']) ? $_POST['email'] : ''); ?>" />
+							</div>
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="control-label col-sm-2">Password</label>
-						<div class="col-sm-6">
-							<input type="password" class="form-control" name="password"/>
+					<div class="row">
+						<div class="form-group">
+							<label class="control-label col-sm-3">Password</label>
+							<div class="col-sm-6">
+								<input type="password" class="form-control" name="password"/>
+							</div>
 						</div>
 					</div>
-					<div class="form-group">
-						<div class="col-sm-6 text-center">
-							<button type="submit" class="btn btn-primary" name="submit">Sign In</button>
-							<button type="reset" class="btn btn-primary" name="reset">Reset</button>
+					<div class="row">
+						<div class="form-group">
+							<div class="col-sm-6 text-center">
+								<button type="submit" class="btn btn-primary" name="submit">Sign In</button>
+								<button type="reset" class="btn btn-primary" name="reset">Reset</button>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-2"></div>
-						<div class="col-sm-6">
-							<?php if (!empty($loginErr)) :?>
-								<div class="help-block alert alert-danger"><?=$loginErr?></div>
+						<div class="col-sm-8">
+							<?php if (!empty($emailErr['user'])) :?>
+								<div class="help-block alert alert-danger"><?=$emailErr['user']?></div>
 							<?php endif ?>
 							<?php if (!empty($loginuser)) :?>
 								<div class="help-block alert alert-success"><?=$loginuser?></div>
 							<?php endif ?>	
-							<?php if(!empty($emailErr)) :?>
-								<div class="help-block alert alert-danger"><?=$emailErr?></div>
-							<?php endif ?>	
+							<?php if(!empty($emailErr['empty'])) :?>
+								<div class="help-block alert alert-danger"><?=$emailErr['empty']?></div>
+							<?php endif ?>
+							<?php if(!empty($emailErr['valid'])) :?>
+								<div class="help-block alert alert-danger"><?=$emailErr['valid']?></div>
+							<?php endif ?>
 						</div>
+						<div class="col-sm-2"></div>
 					</div>
 					<div class="col-sm-4"></div>	
 				</form>
 			</div>
-			<div class="col-sm-4"></div>
+			<div class="col-sm-3"></div>
 		</div>
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
