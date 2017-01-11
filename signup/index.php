@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'config.php';
 
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
@@ -94,7 +95,7 @@ if (isset($_POST['signup'])) {
 		";
 		if (mysqli_query($connect, $sql)) {
 			$signup = "Your account had been created..!";
-			/*header("refresh: 10 ;url=login.php");*/
+			header("refresh: 10 ;url=login.php");
 		} else {
 			$signupErr = "something went wrong";
 		}
@@ -119,6 +120,16 @@ if (isset($_POST['signup'])) {
 </head>
 <body>
 	<div class="container">
+	<?php if (isset($_SESSION['user'])) : ?>
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="alert alert-danger"><strong>Error!</strong>You are already registered. Please back to your profile <a href="myprofile.php" class="btn btn-primary">My Profile</a></div>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+	<?php endif ?>
+	<?php if (!isset($_SESSION['user'])) : ?>
 		<div class="row">
 			<div class="col-md-3 col-sm-2"></div>
 			<div class="col-md-6 signup col-sm-8 col-xs-12">
@@ -273,6 +284,7 @@ if (isset($_POST['signup'])) {
 			</div>
 			<div class="col-md-3 col-sm-2"></div>
 		</div>
+	<?php endif ?>
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

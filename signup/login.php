@@ -1,33 +1,32 @@
 <?php
-
+session_start ();
 include 'config.php';
 $emailErr = array ( );
 
 if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? $_POST['email'] : '';
 	$password = isset($_POST['password']) ? $_POST['password'] : '';
-
 	if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
-	}else if  (!filter_var($email,FILTER_VALIDATE_EMAIL) === true){
-		$emailErr['valid'] = "Your e-mail address is not valid!" ;
+	}else if  (!filter_var($email,FILTER_VALIDATE_EMAIL) === true) {
+		$emailErr['valid'] = "Your e-mail address is not valid!";
 	} else {
-
 		$password = md5($password);
-
 		$sql = "SELECT
 					`firstname`,
 					`lastname`
 				FROM `users`
 				WHERE `email` = '" . mysqli_real_escape_string($connect, $email) . "' AND `password` = '" . mysqli_real_escape_string($connect, $password) ."'
 				LIMIT 1";
-
 		if (($result = mysqli_query($connect, $sql))) {
 			if (!mysqli_num_rows($result)) {
 				$emailErr['user'] = "Invalid user! Your information is not in our database";
+				header ("refresh: 5, url=index.php");
 			} else {
 				while ($rows = mysqli_fetch_assoc($result)) {
 					$loginuser = "Hello, ".$rows['firstname']." ".$rows['lastname']."<br />\n";
+					$_SESSION['user'] = $loginuser;
+					header("refresh: 5, url=myprofile.php");
 				}
 			}
 		} else {

@@ -1,6 +1,7 @@
 <?php
-$connect = mysqli_connect("localhost", "root", "", "signupform");
+$connect = new mysqli("localhost", "root", "", "signupform");
 mysqli_set_charset($connect, 'UTF8');
-if (!$connect) {
-	echo ("Connection error" . $connect->connect_error);
+
+if ($connect->connect_error){
+	echo ("Connection Error:" . $connect->connect_error);
 }
