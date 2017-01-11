@@ -2,6 +2,7 @@
 session_start();
 include 'config.php';
 
+
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
 $lastname = isset($_POST['lastname']) ? trim($_POST['lastname']) : '';
 $age = isset($_POST['age']) ? trim($_POST['age']) : '';
@@ -55,8 +56,8 @@ if (isset($_POST['signup'])) {
 	} else  {
 		$sql = "SELECT `email`
 			FROM users
-			WHERE `email` = '" . mysqli_real_escape_string($connect, $email) . "' ";
-		$emailresult = mysqli_query($connect, $sql);
+			WHERE `email` = '" . $connect->real_escape_string($email) . "' ";
+		$emailresult = $connect->query ($sql);
 		if (mysqli_num_rows($emailresult)) {
 			$validateErr['email'] = "E-mail address is already registered";
 		}
@@ -83,17 +84,17 @@ if (isset($_POST['signup'])) {
 				`email`,
 				`password`
 			) VALUES (
-				'" .mysqli_real_escape_string($connect, $firstname). "',
-				'" .mysqli_real_escape_string($connect, $lastname). "',
-				'" .mysqli_real_escape_string($connect, $age). "',
-				'" .mysqli_real_escape_string($connect, $country). "',
-				'" .mysqli_real_escape_string($connect, $city). "',
-				'" .mysqli_real_escape_string($connect, $address). "',
-				'" .mysqli_real_escape_string($connect, $email). "',
-				'" .mysqli_real_escape_string($connect, $password). "'
+				'" .$connect->real_escape_string($firstname). "',
+				'" .$connect->real_escape_string($lastname). "',
+				'" .$connect->real_escape_string($age). "',
+				'" .$connect->real_escape_string($country). "',
+				'" .$connect->real_escape_string($city). "',
+				'" .$connect->real_escape_string($address). "',
+				'" .$connect->real_escape_string($email). "',
+				'" .$connect->real_escape_string($password). "'
 			)
 		";
-		if (mysqli_query($connect, $sql)) {
+		if ($connect->query ($sql)) {
 			$signup = "Your account had been created..!";
 			header("refresh: 10 ;url=login.php");
 		} else {
@@ -106,7 +107,7 @@ if (isset($_POST['signup'])) {
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<meta name="viewport" content="widrh=device-width,initial-scale=1"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<style>
 		.signup{

@@ -1,14 +1,16 @@
 <?php
 session_start ();
 include 'config.php';
+include_once 'browser.func.php';
 $emailErr = array ( );
 
 if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? $_POST['email'] : '';
 	$password = isset($_POST['password']) ? $_POST['password'] : '';
+	$browserinfo = $_POST['browser'];
 	if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
-	}else if  (!filter_var($email,FILTER_VALIDATE_EMAIL) === true) {
+	}else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
 	} else {
 		$password = md5($password);
@@ -16,14 +18,14 @@ if (isset($_POST['submit'])) {
 					`firstname`,
 					`lastname`
 				FROM `users`
-				WHERE `email` = '" . mysqli_real_escape_string($connect, $email) . "' AND `password` = '" . mysqli_real_escape_string($connect, $password) ."'
+				WHERE `email` = '" . $connect->real_escape_string($email) . "' AND `password` = '" . $connect->real_escape_string($password) ."'
 				LIMIT 1";
-		if (($result = mysqli_query($connect, $sql))) {
-			if (!mysqli_num_rows($result)) {
+		if (($result = $connect->query($sql))) {
+			if (!$result->num_rows) {
 				$emailErr['user'] = "Invalid user! Your information is not in our database";
 				header ("refresh: 5, url=index.php");
 			} else {
-				while ($rows = mysqli_fetch_assoc($result)) {
+				while ($rows = $result->fetch_assoc()) {
 					$loginuser = "Hello, ".$rows['firstname']." ".$rows['lastname']."<br />\n";
 					$_SESSION['user'] = $loginuser;
 					header("refresh: 5, url=myprofile.php");
@@ -31,16 +33,17 @@ if (isset($_POST['submit'])) {
 			}
 		} else {
 			echo "Error!";
-			echo mysqli_error($connect);
+			echo $connect->connect-error;
 		}
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<meta name="viewport" content="widrh=device-width,initial-scale=1"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<style>
 		.signup{
@@ -79,6 +82,8 @@ if (isset($_POST['submit'])) {
 							<div class="col-sm-6 text-center">
 								<button type="submit" class="btn btn-primary" name="submit">Sign In</button>
 								<button type="reset" class="btn btn-primary" name="reset">Reset</button>
+								<input type="hidden" name="browser" value="<?=$yourbrowser?>"/>
+								<input type="hidden" name="hour" value=""/>
 							</div>
 						</div>
 					</div>
@@ -90,7 +95,7 @@ if (isset($_POST['submit'])) {
 							<?php endif ?>
 							<?php if (!empty($loginuser)) :?>
 								<div class="help-block alert alert-success"><?=$loginuser?></div>
-							<?php endif ?>	
+							<?php endif ?>
 							<?php if(!empty($emailErr['empty'])) :?>
 								<div class="help-block alert alert-danger"><?=$emailErr['empty']?></div>
 							<?php endif ?>
@@ -100,7 +105,7 @@ if (isset($_POST['submit'])) {
 						</div>
 						<div class="col-sm-2"></div>
 					</div>
-					<div class="col-sm-4"></div>	
+					<div class="col-sm-4"></div>
 				</form>
 			</div>
 			<div class="col-sm-3"></div>
