@@ -2,8 +2,7 @@
 ini_set('session.hash_function', 1);
 session_start();
 include 'config.php';
-include_once 'securimage/securimage.php';
-$securimage = new Securimage();
+
 
 
 
@@ -66,6 +65,13 @@ if (isset($_POST['signup'])) {
 			$validateErr['email'] = "E-mail address is already registered";
 		}
 	}
+	
+$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+$response = json_decode($response, true);
+	if($response["success"] === false){
+        $validateErr['captcha'] = "Please complete reCaptcha";
+	}
 
 	if (empty($password) || empty($repassword)) {
 		$validateErr['password'] = "Please <b>Enter</b> your <b>Password</b>! ";
@@ -74,12 +80,6 @@ if (isset($_POST['signup'])) {
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
 	}
-	
-	if ($securimage->check($_POST['captcha_code']) === false) {
-		$validateErr['captcha'] = "The security code entered was incorrect.<br /><br />";
-	}
-
-
 	if (!count($validateErr)) {
 		$password = md5($password);
 		$sql = "

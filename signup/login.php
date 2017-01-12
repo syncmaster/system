@@ -2,8 +2,7 @@
 session_start ();
 include 'config.php';
 include_once 'browser.func.php';
-include_once 'securimage/securimage.php';
-$securimage = new Securimage();
+
 
 $emailErr = array ( );
 
@@ -16,32 +15,38 @@ if (isset($_POST['submit'])) {
 		$emailErr['empty'] = "Please enter the email and password fields";
 	}else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
-	}else if ($securimage->check($_POST['captcha_code']) === false) {
-		$captcha = "The security code entered was incorrect.<br /><br />";
-	}else if ($_SESSION['']) {
+	} else {
 		
-	}else {
-		$password = md5($password);
-		$sql = "SELECT
-					`id`,
-					`firstname`,
-					`lastname`
-				FROM `users`
-				WHERE `email` = '" . $connect->real_escape_string($email) . "' AND `password` = '" . $connect->real_escape_string($password) ."'
-				LIMIT 1";
-		if (($result = $connect->query($sql))) {
-			if (!$result->num_rows) {
-				$emailErr['user'] = "Invalid user! Your information is not in our database";
-				header ("refresh: 5, url=index.php");
+		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+        $response = json_decode($response, true);
+        if($response["success"] === false)
+        {
+            $emailErr['valid'] = "Please complete reCaptcha";
+        }else {
+		
+			$password = md5($password);
+			$sql = "SELECT
+						`id`,
+						`firstname`,
+						`lastname`
+					FROM `users`
+					WHERE `email` = '" . $connect->real_escape_string($email) . "' AND `password` = '" . $connect->real_escape_string($password) ."'
+					LIMIT 1";
+			if (($result = $connect->query($sql))) {
+				if (!$result->num_rows) {
+					$emailErr['user'] = "Invalid user! Your information is not in our database";
+					header ("refresh: 5, url=index.php");
+				} else {
+					$user = $result->fetch_assoc() ;
+					$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."<br />\n";
+					$_SESSION['user'] = $loginuser;
+					header("refresh: 5, url=myprofile.php");
+				}
 			} else {
-				$user = $result->fetch_assoc() ;
-				$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."<br />\n";
-				$_SESSION['user'] = $loginuser;
-				header("refresh: 5, url=myprofile.php");
+				echo "Error!";
+				echo $connect->connect-error;
 			}
-		} else {
-			echo "Error!";
-			echo $connect->connect-error;
 		}
 	}
 }
