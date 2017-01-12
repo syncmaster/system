@@ -18,6 +18,8 @@ if (isset($_POST['submit'])) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
 	}else if ($securimage->check($_POST['captcha_code']) === false) {
 		$captcha = "The security code entered was incorrect.<br /><br />";
+	}else if ($_SESSION['']) {
+		
 	}else {
 		$password = md5($password);
 		$sql = "SELECT
@@ -60,6 +62,7 @@ if (isset($_POST['submit'])) {
 			padding:0;
 		}
 	</style>
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 	<div id="container">
@@ -86,9 +89,7 @@ if (isset($_POST['submit'])) {
 					<div class="row">
 						<div class="col-md-4"></div>
 						<div class="col-md-4">
-							<img id="captcha" src="securimage/securimage_show.php" alt="CAPTCHA Image" />
-							<input type="text" name="captcha_code" class="form-control" size="7" maxlength="6" />
-							<a href="#" onclick="document.getElementById('captcha').src = 'securimage/securimage_show.php?' + Math.random(); return false">[ Different Image ]</a>
+							<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u"></div>
 						</div>
 						<div class="col-md-4"></div>
 					</div>
@@ -105,8 +106,8 @@ if (isset($_POST['submit'])) {
 						<div class="col-sm-4"></div>
 					</div>
 					<div class="row">
-						<div class="col-sm-2"></div>
-						<div class="col-sm-8">
+						<div class="col-sm-3"></div>
+						<div class="col-sm-6">
 							<?php if (!empty($captcha)) : ?>
 								<div class="help-block alert alert-danger"><?=$captcha?></div>
 							<?php endif ?>
@@ -123,7 +124,7 @@ if (isset($_POST['submit'])) {
 								<div class="help-block alert alert-danger"><?=$emailErr['valid']?></div>
 							<?php endif ?>
 						</div>
-						<div class="col-sm-2"></div>
+						<div class="col-sm-3"></div>
 					</div>
 					<div class="col-sm-4"></div>
 				</form>

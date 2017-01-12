@@ -127,6 +127,7 @@ if (isset($_POST['signup'])) {
 			padding:0;
 		}
 	</style>
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 	<div class="container">
@@ -260,9 +261,7 @@ if (isset($_POST['signup'])) {
 					<div class="row">
 						<div class="col-md-4"></div>
 						<div class="col-md-4">
-							<img id="captcha" src="securimage/securimage_show.php" alt="CAPTCHA Image" />
-							<input type="text" name="captcha_code" class="form-control" size="7" maxlength="6" />
-							<a href="#" onclick="document.getElementById('captcha').src = 'securimage/securimage_show.php?' + Math.random(); return false">[ Different Image ]</a>
+						<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u"></div>
 						</div>
 						<div class="col-md-4"></div>
 					</div>
