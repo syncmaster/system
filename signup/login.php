@@ -2,19 +2,26 @@
 session_start ();
 include 'config.php';
 include_once 'browser.func.php';
+include_once 'securimage/securimage.php';
+$securimage = new Securimage();
+
 $emailErr = array ( );
 
 if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? $_POST['email'] : '';
 	$password = isset($_POST['password']) ? $_POST['password'] : '';
 	$browserinfo = $_POST['browser'];
+
 	if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
 	}else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
-	} else {
+	}else if ($securimage->check($_POST['captcha_code']) === false) {
+		$captcha = "The security code entered was incorrect.<br /><br />";
+	}else {
 		$password = md5($password);
 		$sql = "SELECT
+					`id`,
 					`firstname`,
 					`lastname`
 				FROM `users`
@@ -25,11 +32,10 @@ if (isset($_POST['submit'])) {
 				$emailErr['user'] = "Invalid user! Your information is not in our database";
 				header ("refresh: 5, url=index.php");
 			} else {
-				while ($rows = $result->fetch_assoc()) {
-					$loginuser = "Hello, ".$rows['firstname']." ".$rows['lastname']."<br />\n";
-					$_SESSION['user'] = $loginuser;
-					header("refresh: 5, url=myprofile.php");
-				}
+				$user = $result->fetch_assoc() ;
+				$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."<br />\n";
+				$_SESSION['user'] = $loginuser;
+				header("refresh: 5, url=myprofile.php");
 			}
 		} else {
 			echo "Error!";
@@ -63,33 +69,47 @@ if (isset($_POST['submit'])) {
 				<form action="login.php" method="post" class="form-horizontal" name="register">
 					<div class="row">
 						<div class="form-group">
-							<label class="control-label col-sm-3">Email:</label>
-							<div class="col-sm-6">
+							<label class="control-label col-sm-4">Email:</label>
+							<div class="col-sm-4">
 								<input type="text" class="form-control" name="email" value="<?php echo htmlspecialchars(isset($_POST['email']) ? $_POST['email'] : ''); ?>" />
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="form-group">
-							<label class="control-label col-sm-3">Password</label>
-							<div class="col-sm-6">
+							<label class="control-label col-sm-4">Password</label>
+							<div class="col-sm-4">
 								<input type="password" class="form-control" name="password"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
+						<div class="col-md-4"></div>
+						<div class="col-md-4">
+							<img id="captcha" src="securimage/securimage_show.php" alt="CAPTCHA Image" />
+							<input type="text" name="captcha_code" class="form-control" size="7" maxlength="6" />
+							<a href="#" onclick="document.getElementById('captcha').src = 'securimage/securimage_show.php?' + Math.random(); return false">[ Different Image ]</a>
+						</div>
+						<div class="col-md-4"></div>
+					</div>
+					<div class="row">
+					<div class="col-sm-4"></div>
 						<div class="form-group">
-							<div class="col-sm-6 text-center">
+							<div class="col-sm-4 text-center">
 								<button type="submit" class="btn btn-primary" name="submit">Sign In</button>
 								<button type="reset" class="btn btn-primary" name="reset">Reset</button>
 								<input type="hidden" name="browser" value="<?=$yourbrowser?>"/>
 								<input type="hidden" name="hour" value=""/>
 							</div>
 						</div>
+						<div class="col-sm-4"></div>
 					</div>
 					<div class="row">
 						<div class="col-sm-2"></div>
 						<div class="col-sm-8">
+							<?php if (!empty($captcha)) : ?>
+								<div class="help-block alert alert-danger"><?=$captcha?></div>
+							<?php endif ?>
 							<?php if (!empty($emailErr['user'])) :?>
 								<div class="help-block alert alert-danger"><?=$emailErr['user']?></div>
 							<?php endif ?>

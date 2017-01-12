@@ -1,6 +1,10 @@
 <?php
+ini_set('session.hash_function', 1);
 session_start();
 include 'config.php';
+include_once 'securimage/securimage.php';
+$securimage = new Securimage();
+
 
 
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
@@ -57,8 +61,8 @@ if (isset($_POST['signup'])) {
 		$sql = "SELECT `email`
 			FROM users
 			WHERE `email` = '" . $connect->real_escape_string($email) . "' ";
-		$emailresult = $connect->query ($sql);
-		if (mysqli_num_rows($emailresult)) {
+		$emailresult = $connect->query($sql);
+		if ($emailresult->num_rows) {
 			$validateErr['email'] = "E-mail address is already registered";
 		}
 	}
@@ -70,6 +74,11 @@ if (isset($_POST['signup'])) {
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
 	}
+	
+	if ($securimage->check($_POST['captcha_code']) === false) {
+		$validateErr['captcha'] = "The security code entered was incorrect.<br /><br />";
+	}
+
 
 	if (!count($validateErr)) {
 		$password = md5($password);
@@ -247,6 +256,15 @@ if (isset($_POST['signup'])) {
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4"></div>
+						<div class="col-md-4">
+							<img id="captcha" src="securimage/securimage_show.php" alt="CAPTCHA Image" />
+							<input type="text" name="captcha_code" class="form-control" size="7" maxlength="6" />
+							<a href="#" onclick="document.getElementById('captcha').src = 'securimage/securimage_show.php?' + Math.random(); return false">[ Different Image ]</a>
+						</div>
+						<div class="col-md-4"></div>
 					</div>
 					<div class="row">
 						<div class="form-group center-block">
