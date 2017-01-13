@@ -1,14 +1,13 @@
 <?php
-session_start ();
 include 'boot.php';
 include_once 'browser.func.php';
 
 $emailErr = array ( );
 
 if (isset($_POST['submit'])) {
-	$email = isset($_POST['email']) ? $_POST['email'] : '';
-	$password = isset($_POST['password']) ? $_POST['password'] : '';
-	$browserinfo = $_POST['browser'];
+	$email = isset($_POST['email']) ? trim($_POST['email']) : '';
+	$password = isset($_POST['password']) ? trim($_POST['password']) : '';
+
 
 	if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
@@ -20,6 +19,7 @@ if (isset($_POST['submit'])) {
         $response = json_decode($response, true);
         if($response["success"] === false) {
             $emailErr['valid'] = "Please complete reCaptcha";
+			
 
         }else {
 			$password = md5($password);
@@ -33,7 +33,6 @@ if (isset($_POST['submit'])) {
 			if (($result = $connect->query($sql))) {
 				if (!$result->num_rows) {
 					$emailErr['user'] = "Invalid user! Your information is not in our database";
-					header ("refresh: 5, url=index.php");
 				} else {
 					$user = $result->fetch_assoc() ;
 					$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."<br />\n";
@@ -44,11 +43,11 @@ if (isset($_POST['submit'])) {
 							INSERT INTO logininfo (
 								`user_id`,
 								`date`,
-								`browser`
+								`browser`,
 							) VALUES (
 								'" .$connect->real_escape_string($userid). "',
 								NOW(),
-								'" .$connect->real_escape_string($yourbrowser). "'
+								'" .$connect->real_escape_string($yourbrowser). "',
 							)
 					";
 					$connect->query($sql);
@@ -60,7 +59,6 @@ if (isset($_POST['submit'])) {
 		}
 	}
 }
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -84,6 +82,13 @@ if (isset($_POST['submit'])) {
 			-webkit-transform-origin:0 0;
 		}
 	</style>
+	<script language="javascript">
+		function utcDifference() {
+		var date = new Date();
+		var utcdiff = d.getTimezoneOffset();
+		document.getElementById("utcdiff").innerHTML = utcdiff;
+		}
+	</script>
 </head>
 <body>
 	<div id="container">
@@ -121,11 +126,10 @@ if (isset($_POST['submit'])) {
 						<div class="form-group">
 							<div class="col-sm-4 text-center">
 								<button type="submit" class="btn btn-primary" name="submit">Sign In</button>
-								<button type="reset" class="btn btn-primary" name="reset">Reset</button>
-								<input type="hidden" name="browser" value="<?=$yourbrowser?>"/>
+								<button type="reset" class="btn btn-primary" onclick="utcDifference()" name="reset">Reset</button>
 							</div>
 						</div>
-						<div class="col-sm-4"></div>
+						<div class="col-sm-4"><p id="utcdiff" ></p></div>
 					</div>
 					<div class="row">
 						<div class="col-sm-3"></div>
