@@ -101,7 +101,7 @@ if (isset($_POST['signup'])) {
 		";
 		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
-			header("refresh: 10 ;url=login.php");
+			header("refresh: 2 ;url=login.php");
 		} else {
 			$signupErr = "something went wrong";
 		}
