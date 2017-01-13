@@ -1,8 +1,7 @@
 <?php
 session_start ();
-include 'config.php';
+include 'boot.php';
 include_once 'browser.func.php';
-
 
 $emailErr = array ( );
 
@@ -15,16 +14,14 @@ if (isset($_POST['submit'])) {
 		$emailErr['empty'] = "Please enter the email and password fields";
 	}else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
-	} else {
-		
+	}else {
 		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
         $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
         $response = json_decode($response, true);
-        if($response["success"] === false)
-        {
+        if($response["success"] === false) {
             $emailErr['valid'] = "Please complete reCaptcha";
+
         }else {
-		
 			$password = md5($password);
 			$sql = "SELECT
 						`id`,
@@ -40,12 +37,25 @@ if (isset($_POST['submit'])) {
 				} else {
 					$user = $result->fetch_assoc() ;
 					$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."<br />\n";
-					$_SESSION['user'] = $loginuser;
-					header("refresh: 5, url=myprofile.php");
+					$userid = $user['id'];
+					$_SESSION['user'] = $user;
+					header("Location:myprofile.php");
+					$sql = "
+							INSERT INTO logininfo (
+								`user_id`,
+								`date`,
+								`browser`
+							) VALUES (
+								'" .$connect->real_escape_string($userid). "',
+								NOW(),
+								'" .$connect->real_escape_string($yourbrowser). "'
+							)
+					";
+					$connect->query($sql);
 				}
 			} else {
 				echo "Error!";
-				echo $connect->connect-error;
+				echo $connect->connect_error;
 			}
 		}
 	}
@@ -58,22 +68,28 @@ if (isset($_POST['submit'])) {
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<style>
 		.signup{
-			background-color:#B0C4DE;
+			background-color: #B0C4DE;
 		}
 		.row{
-			margin:0;
-			padding:0;
+			margin: 0;
+			padding: 0;
+		}
+		.g-recaptcha{
+			transform:scale(0.77);
+			-webkit-transform:scale(0.77);
+			transform-origin:left top;
+			-webkit-transform-origin:0 0;
 		}
 	</style>
-	<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 	<div id="container">
 		<div class="row">
-			<div class="col-sm-3"></div>
-			<div class="col-sm-6 col-xs-12">
+			<div class="col-sm-3 col-md-3"></div>
+			<div class="col-sm-6 col-md-6">
 				<form action="login.php" method="post" class="form-horizontal" name="register">
 					<div class="row">
 						<div class="form-group">
@@ -93,10 +109,12 @@ if (isset($_POST['submit'])) {
 					</div>
 					<div class="row">
 						<div class="col-md-4"></div>
-						<div class="col-md-4">
-							<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u"></div>
+						<div class="col-md-5">
+							<div class="form-group">
+								<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u" style="transform:scale(0.77);-webkit-transform:scale(0.90);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+							</div>
 						</div>
-						<div class="col-md-4"></div>
+						<div class="col-md-3"></div>
 					</div>
 					<div class="row">
 					<div class="col-sm-4"></div>
@@ -105,7 +123,6 @@ if (isset($_POST['submit'])) {
 								<button type="submit" class="btn btn-primary" name="submit">Sign In</button>
 								<button type="reset" class="btn btn-primary" name="reset">Reset</button>
 								<input type="hidden" name="browser" value="<?=$yourbrowser?>"/>
-								<input type="hidden" name="hour" value=""/>
 							</div>
 						</div>
 						<div class="col-sm-4"></div>
@@ -134,7 +151,7 @@ if (isset($_POST['submit'])) {
 					<div class="col-sm-4"></div>
 				</form>
 			</div>
-			<div class="col-sm-3"></div>
+			<div class="col-sm-3 col-md-3"></div>
 		</div>
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

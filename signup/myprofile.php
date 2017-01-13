@@ -1,19 +1,20 @@
 <?php
-session_start ();
-$user = array( );
+session_start();
+$user = array();
+
 if(isset($_SESSION['user'])) {
-	$user['success'] = $_SESSION['user'];
-} else {
-	$user['failed'] = "You are not logged in!!! You will be redirect to login page";
+	$user = $_SESSION['user'];
+} 
+
+if (empty($user)) {
 	header("refresh: 5,url=login.php");
 }
-
 ?>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8"/>
-		<meta name="viewport" content="widrh=device-width,initial-scale=1"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1"/>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	</head>
 	<body>
@@ -21,17 +22,16 @@ if(isset($_SESSION['user'])) {
 			<div class="row">
 				<div class="col-md-3"></div>
 				<div class="col-md-6">
-					<?php if (!empty($user['success'])) : ?>
+				<?php if (empty($user)): ?>
+					<div class="alert alert-danger">
+						<strong>You are not logged in!!! You will be redirect to login page</strong>
+					</div>
+				<?php else: ?>
 					<div class="alert alert-success">
-						<strong>Success!</strong> <?=$user['success']?>
+						<strong>Success!</strong> Hello, <?=$user['firstname']?> <?=$user['lastname']?>
 						<a href="logout.php" class="btn btn-primary">Log out</a>
 					</div>
-					<?php endif ?>
-					<?php if (!empty($user['failed'])) : ?>
-					<div class="alert alert-danger">
-						<strong><?=$user['failed']?></strong>
-					</div>
-					<?php endif ?>
+				<?php endif ?>
 				</div>
 				<div class="col-md-3"></div>
 			</div>

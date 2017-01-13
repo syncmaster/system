@@ -1,10 +1,5 @@
 <?php
-ini_set('session.hash_function', 1);
-session_start();
-include 'config.php';
-
-
-
+include 'boot.php';
 
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
 $lastname = isset($_POST['lastname']) ? trim($_POST['lastname']) : '';
@@ -66,9 +61,9 @@ if (isset($_POST['signup'])) {
 		}
 	}
 	
-$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
-$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
-$response = json_decode($response, true);
+	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+	$response = json_decode($response, true);
 	if($response["success"] === false){
         $validateErr['captcha'] = "Please complete reCaptcha";
 	}
@@ -80,6 +75,7 @@ $response = json_decode($response, true);
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
 	}
+	
 	if (!count($validateErr)) {
 		$password = md5($password);
 		$sql = "
@@ -103,7 +99,7 @@ $response = json_decode($response, true);
 				'" .$connect->real_escape_string($password). "'
 			)
 		";
-		if ($connect->query ($sql)) {
+		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
 			header("refresh: 10 ;url=login.php");
 		} else {
@@ -118,16 +114,30 @@ $response = json_decode($response, true);
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<style>
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+	<style>		
 		.signup{
-			background-color:#B0C4DE;
+			background-color: #B0C4DE;
 		}
 		.row{
-			margin:0;
-			padding:0;
+			margin: 0;
+			padding: 0;
 		}
-	</style>
-	<script src='https://www.google.com/recaptcha/api.js'></script>
+		.g-recaptcha{
+			transform:scale(0.65);
+			-webkit-transform:scale(0.85);
+			transform-origin:left top;
+			-webkit-transform-origin:0 0;
+		}
+		@media screen and (max-height: 575px){
+		#rc-imageselect, .g-recaptcha {
+			transform:scale(0.70);
+			-webkit-transform:scale(0.70);
+			transform-origin:0 0;
+			-webkit-transform-origin:0 0;
+			}
+		}
+	</style>	
 </head>
 <body>
 	<div class="container">
@@ -260,10 +270,12 @@ $response = json_decode($response, true);
 					</div>
 					<div class="row">
 						<div class="col-md-4"></div>
-						<div class="col-md-4">
-						<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u"></div>
+						<div class="col-md-5">
+							<div class="form-group">
+								<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u" style="transform:scale(0.77);-webkit-transform:scale(0.90);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+							</div>
 						</div>
-						<div class="col-md-4"></div>
+						<div class="col-md-3"></div>
 					</div>
 					<div class="row">
 						<div class="form-group center-block">
