@@ -1,5 +1,6 @@
 <?php
 include 'boot.php';
+require_once 'mail.php';
 
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
 $lastname = isset($_POST['lastname']) ? trim($_POST['lastname']) : '';
@@ -101,6 +102,8 @@ if (isset($_POST['signup'])) {
 		";
 		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
+			//PHP Mail send with successful sing up
+			$mail->Send();
 			header("refresh: 2 ;url=login.php");
 		} else {
 			$signupErr = "something went wrong";

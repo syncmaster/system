@@ -1,15 +1,20 @@
+
 <?php
 include 'boot.php';
 include_once 'browser.func.php';
-
 $emailErr = array ( );
-
+$_SESSION['fail'] = 0;
 if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 	$password = isset($_POST['password']) ? trim($_POST['password']) : '';
-
-
-	if (empty($email) || empty($password)) {
+	
+	if ($_SESSION['fail'] > 3) {
+		 if( time() - $_SESSION['last_login_time'] < 1*60*60 ) {
+         $emailErr['loginerr'] = "cant login for 1 min";
+		 
+      }	
+	}
+	else if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
 	}else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
@@ -20,7 +25,6 @@ if (isset($_POST['submit'])) {
         if($response["success"] === false) {
             $emailErr['valid'] = "Please complete reCaptcha";
 			
-
         }else {
 			$password = md5($password);
 			$sql = "SELECT
@@ -33,6 +37,8 @@ if (isset($_POST['submit'])) {
 			if (($result = $connect->query($sql))) {
 				if (!$result->num_rows) {
 					$emailErr['user'] = "Invalid user! Your information is not in our database";
+					$_SESSION['fail'] = $_SESSION['fail'] +1;
+					$_SESSION['last_login_time'] = time();
 				} else {
 					$user = $result->fetch_assoc() ;
 					$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."<br />\n";
@@ -144,6 +150,9 @@ if (isset($_POST['submit'])) {
 					<div class="row">
 						<div class="col-sm-3"></div>
 						<div class="col-sm-6">
+							<?php if (!empty($emailErr['loginerr'])) : ?>
+								<div class="help-block alert alert-danger"><?=$emailErr['loginerr']?></div>
+							<?php endif ?>	
 							<?php if (!empty($captcha)) : ?>
 								<div class="help-block alert alert-danger"><?=$captcha?></div>
 							<?php endif ?>
@@ -159,6 +168,7 @@ if (isset($_POST['submit'])) {
 							<?php if(!empty($emailErr['valid'])) :?>
 								<div class="help-block alert alert-danger"><?=$emailErr['valid']?></div>
 							<?php endif ?>
+							<?php echo $_SESSION['fail']; ?>
 						</div>
 						<div class="col-sm-3"></div>
 					</div>
