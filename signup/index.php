@@ -128,8 +128,8 @@ if (isset($_POST['signup'])) {
 			padding: 0;
 		}
 		.g-recaptcha {
-			transform:scale(0.77);
-			-webkit-transform:scale(0.77);
+			transform:scale(0.74);
+			-webkit-transform:scale(0.74);
 			transform-origin:left top;
 			-webkit-transform-origin:0 0;
 		}
