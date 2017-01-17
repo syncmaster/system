@@ -47,7 +47,7 @@ if (isset($_POST['signup'])) {
 	if (empty($address)) {
 		$validateErr['address'] = "Please <b><b>Enter</b></b> your <b>Address</b>! ";
 	}
-	
+
 	if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$validateErr['email'] = "Your <b>E-mail</b> is <b>not valid</b>! ";
 	} else if (empty($email)) {
@@ -55,14 +55,14 @@ if (isset($_POST['signup'])) {
 	} else  {
 		$sql = "SELECT `email`
 			FROM users
-			WHERE 
+			WHERE
 			`email` = '" . $connect->real_escape_string($email) . "' ";
 		$emailresult = $connect->query($sql);
 		if ($emailresult->num_rows) {
 			$validateErr['email'] = "E-mail address is already registered";
 		}
 	}
-	
+
 /*	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
@@ -77,7 +77,7 @@ if (isset($_POST['signup'])) {
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
 	}
-	
+
 	if (!count($validateErr)) {
 		$password = md5($password);
 		$sql = "
@@ -119,21 +119,21 @@ if (isset($_POST['signup'])) {
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<script src='https://www.google.com/recaptcha/api.js'></script>
-	<style>		
-		.signup{
+	<style>
+		.signup {
 			background-color: #B0C4DE;
 		}
-		.row{
+		.row {
 			margin: 0;
 			padding: 0;
 		}
 		.g-recaptcha {
-			transform:scale(0.65);
-			-webkit-transform:scale(0.65);
+			transform:scale(0.77);
+			-webkit-transform:scale(0.77);
 			transform-origin:left top;
 			-webkit-transform-origin:0 0;
 		}
-	</style>	
+	</style>
 </head>
 <body>
 	<div class="container">
