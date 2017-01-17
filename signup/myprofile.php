@@ -32,6 +32,7 @@ if (empty($user)) {
 						<a href="logout.php" class="btn btn-primary">Log out</a>
 					</div>
 				<?php endif ?>
+				<p><?=$_SESSION['utcdiff']?> minutes difference bewtween UTC time;</p>
 				</div>
 				<div class="col-md-3"></div>
 			</div>

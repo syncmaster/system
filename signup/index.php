@@ -55,7 +55,8 @@ if (isset($_POST['signup'])) {
 	} else  {
 		$sql = "SELECT `email`
 			FROM users
-			WHERE `email` = '" . $connect->real_escape_string($email) . "' ";
+			WHERE 
+			`email` = '" . $connect->real_escape_string($email) . "' ";
 		$emailresult = $connect->query($sql);
 		if ($emailresult->num_rows) {
 			$validateErr['email'] = "E-mail address is already registered";
@@ -127,7 +128,7 @@ if (isset($_POST['signup'])) {
 			padding: 0;
 		}
 		.g-recaptcha {
-			transform:scale(0.60);
+			transform:scale(0.65);
 			-webkit-transform:scale(0.65);
 			transform-origin:left top;
 			-webkit-transform-origin:0 0;

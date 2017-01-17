@@ -32,7 +32,7 @@
 			</div>
 			<div class="col-md-3"></div>
 		</div>
-	{elseif !isset($user) }
+	{else if NOT isset($user) }
 		<div class="row">
 			<div class="col-md-3 col-sm-3"></div>
 			<div class="col-md-6 signup col-sm-6">
@@ -78,7 +78,7 @@
 							<label class="control-label col-sm-4">Country:</label>
 							<div class="col-sm-6">
 								<select type="text" class="form-control" name="country" value="{$country}">
-									<option value="selected" {if !mb_strlen($country)}selected{/if} disabled>Please choose country</option>
+									<option value="selected" {if NOT mb_strlen($country)}selected{/if} disabled>Please choose country</option>
 									<option value="Bulgaria" {if $country==="Bulgaria"}selected{/if}>Bulgaria</option>
 									<option value="England" {if $country==="England"}selected{/if}>England</option>
 									<option value="USA" {if $country==="USA"}selected{/if}>USA</option>
@@ -172,10 +172,10 @@
 						<div class="form-group center-block">
 							<div class="col-sm-2"></div>
 							<div class="col-xs-12 col-sm-8">
-								{if !empty($signup)}
+								{if NOT empty($signup)}
 									<div class="alert alert-success col-sm-12"><p style="text-align:center">{$signup}</p></div>
 								{/if}
-								{if !empty($validateErr)}
+								{if NOT empty($validateErr)}
 									<div class="help-block alert alert-danger">
 										<ul>
 											{foreach from=$validateErr item=error}
