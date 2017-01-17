@@ -17,7 +17,7 @@ $validateErr = array();
 
 if (isset($_POST['signup'])) {
 	if (empty($firstname)) {
-		$validateErr['firstname'] = "Please <b>Enter</b> your <b>FirstName</b> " ;
+		$validateErr['firstname'] = "Please <b>Enter</b> your <b>FirstName</b>" ;
 	} else if ((mb_strlen($firstname)) < 6 || (mb_strlen($firstname) > 20)){
 		$validateErr['firstname'] = "Please <b>Enter</b> your Firstname between 6 and 20 symbols ";
 	}
@@ -47,7 +47,7 @@ if (isset($_POST['signup'])) {
 	if (empty($address)) {
 		$validateErr['address'] = "Please <b><b>Enter</b></b> your <b>Address</b>! ";
 	}
-
+	
 	if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$validateErr['email'] = "Your <b>E-mail</b> is <b>not valid</b>! ";
 	} else if (empty($email)) {
@@ -62,13 +62,13 @@ if (isset($_POST['signup'])) {
 		}
 	}
 	
-	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+/*	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
 	if($response["success"] === false){
         $validateErr['captcha'] = "Please complete reCaptcha";
 	}
-
+*/
 	if (empty($password) || empty($repassword)) {
 		$validateErr['password'] = "Please <b>Enter</b> your <b>Password</b>! ";
 	} else if ($password !== $repassword) {
@@ -126,19 +126,11 @@ if (isset($_POST['signup'])) {
 			margin: 0;
 			padding: 0;
 		}
-		.g-recaptcha{
-			transform:scale(0.65);
-			-webkit-transform:scale(0.85);
+		.g-recaptcha {
+			transform:scale(0.60);
+			-webkit-transform:scale(0.65);
 			transform-origin:left top;
 			-webkit-transform-origin:0 0;
-		}
-		@media screen and (max-height: 575px){
-		#rc-imageselect, .g-recaptcha {
-			transform:scale(0.70);
-			-webkit-transform:scale(0.70);
-			transform-origin:0 0;
-			-webkit-transform-origin:0 0;
-			}
 		}
 	</style>	
 </head>
@@ -155,8 +147,8 @@ if (isset($_POST['signup'])) {
 	<?php endif ?>
 	<?php if (!isset($_SESSION['user'])) : ?>
 		<div class="row">
-			<div class="col-md-3 col-sm-2"></div>
-			<div class="col-md-6 signup col-sm-8 col-xs-12">
+			<div class="col-md-3 col-sm-3"></div>
+			<div class="col-md-6 signup col-sm-6">
 				<form action="index.php" method="post" class="form-horizontal" name="register">
 					<div class="row">
 						<div class="form-group <?php if (!empty($validateErr['firstname'])): ?>has-error<?php endif ?>">
@@ -273,12 +265,12 @@ if (isset($_POST['signup'])) {
 					</div>
 					<div class="row">
 						<div class="col-md-4"></div>
-						<div class="col-md-5">
+						<div class="col-md-6">
 							<div class="form-group">
-								<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u" style="transform:scale(0.77);-webkit-transform:scale(0.90);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+								<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u"></div>
 							</div>
 						</div>
-						<div class="col-md-3"></div>
+						<div class="col-md-2"></div>
 					</div>
 					<div class="row">
 						<div class="form-group center-block">
@@ -315,7 +307,7 @@ if (isset($_POST['signup'])) {
 					</div>
 				</form>
 			</div>
-			<div class="col-md-3 col-sm-2"></div>
+			<div class="col-md-3 col-sm-3"></div>
 		</div>
 	<?php endif ?>
 	</div>
