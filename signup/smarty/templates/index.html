@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{title}</title>
+	<title>{$title}</title>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<script src='https://www.google.com/recaptcha/api.js'></script>
-	<style>		
+	<style>
 		.signup{
 			background-color: #B0C4DE;
 		}
@@ -14,25 +14,17 @@
 			margin: 0;
 			padding: 0;
 		}
-		.g-recaptcha{
+		.g-recaptcha {
 			transform:scale(0.65);
-			-webkit-transform:scale(0.85);
+			-webkit-transform:scale(0.65);
 			transform-origin:left top;
 			-webkit-transform-origin:0 0;
 		}
-		@media screen and (max-height: 575px){
-		#rc-imageselect, .g-recaptcha {
-			transform:scale(0.70);
-			-webkit-transform:scale(0.70);
-			transform-origin:0 0;
-			-webkit-transform-origin:0 0;
-			}
-		}
-	</style>	
+	</style>
 </head>
 <body>
 	<div class="container">
-	<?php if (isset($_SESSION['user'])) : ?>
+	{if isset($user) }
 		<div class="row">
 			<div class="col-md-3"></div>
 			<div class="col-md-6">
@@ -40,112 +32,110 @@
 			</div>
 			<div class="col-md-3"></div>
 		</div>
-	<?php endif ?>
-	<?php if (!isset($_SESSION['user'])) : ?>
+	{elseif !isset($user) }
 		<div class="row">
-			<div class="col-md-3 col-sm-2"></div>
-			<div class="col-md-6 signup col-sm-8 col-xs-12">
+			<div class="col-md-3 col-sm-3"></div>
+			<div class="col-md-6 signup col-sm-6">
 				<form action="index.php" method="post" class="form-horizontal" name="register">
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['firstname'])): ?>has-error<?php endif ?>">
+						<div class="form-group {if !empty($firstnameErr)}has-error{/if}">
 							<label class="control-label col-sm-4">FirstName:</label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" value="<?=$firstname;?>" name="firstname"/>
-								<!-- <?php if(isset($validateErr['firstname'])) : ?>
-									<div class="help-block alert alert-danger"><?=$validateErr['firstname'] ?></div>
-								<?php endif ?> -->
+								<input type="text" class="form-control" value="{$firstname}" name="firstname"/>
+								{if isset($firstnameErr)}
+									<div class="help-block alert alert-danger">{$firstnameErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['lastname'])) : ?>has-error<?php endif ?>">
+						<div class="form-group {if !empty($lastnameErr)}has-error{/if}">
 							<label class="control-label col-sm-4">LastName:</label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" name="lastname"/ value="<?=$lastname?>">
-								<!--<?php if(isset($validateErr['lastname'])) : ?>
-									<div class="help-block alert alert-danger"><?=$validateErr['lastname'] ?></div>
-								<?php endif ?> -->
+								<input type="text" class="form-control" name="lastname"/ value="{$lastname}">
+								{if isset($lastnameErr)}
+									<div class="help-block alert alert-danger">{$lastnameErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['age'])) : ?>has-error<?php endif ?>" >
+						<div class="form-group {if !empty($ageErr)}has-error{/if}" >
 							<label class="control-label col-sm-4">Age:</label>
 							<div class="col-sm-6">
-								<input type="number" class="form-control" name="age"/ value="<?=$age?>">
-								<!-- <?php if(isset($validateErr['age'])) : ?>
-									<div class="help-block alert alert-danger"><?php echo $validateErr['age'];?></div>
-								<?php endif ?> -->
+								<input type="number" class="form-control" name="age"/ value="{$age}">
+								{if isset($ageErr)}
+									<div class="help-block alert alert-danger">{$ageErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['country'])) : ?>has-error<?php endif ?>">
+						<div class="form-group {if !empty($countryErr)}has-error{/if}">
 							<label class="control-label col-sm-4">Country:</label>
 							<div class="col-sm-6">
-								<select type="text" class="form-control" name="country" value="<?=$country?>">
-									<option value="selected" <?php if (!mb_strlen($country)): ?>selected<?php endif ?> disabled>Please choose country</option>
-									<option value="Bulgaria" <?php if ($country === "Bulgaria"): ?>selected<?php endif ?>>Bulgaria</option>
-									<option value="England" <?php if ($country === "England"): ?>selected<?php endif ?>>England</option>
-									<option value="USA" <?php if ($country === "USA"): ?>selected<?php endif ?>>USA</option>
-									<option value="Roumania" <?php if ($country === "Roumania"): ?>selected<?php endif ?>>Roumania</option>
-									<option value="Serbia" <?php if ($country === "Serbia"): ?>selected<?php endif ?>>Serbia</option>
+								<select type="text" class="form-control" name="country" value="{$country}">
+									<option value="selected" {if !mb_strlen($country)}selected{/if} disabled>Please choose country</option>
+									<option value="Bulgaria" {if $country==="Bulgaria"}selected{/if}>Bulgaria</option>
+									<option value="England" {if $country==="England"}selected{/if}>England</option>
+									<option value="USA" {if $country==="USA"}selected{/if}>USA</option>
+									<option value="Roumania" {if $country==="Roumania"}selected{/if}>Roumania</option>
+									<option value="Serbia" {if $country==="Serbia"}selected{/if}>Serbia</option>
 								</select>
-								<!-- <?php if (isset($validateErr['country'])) : ?>
-									<div class="help-block alert alert-danger"><?=$validateErr['country'] ?></div>
-								<?php endif ?> -->
-
+								{if isset($countryErr)}
+									<div class="help-block alert alert-danger">{$countryErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['city'])) : ?>has-error <?php endif ?>">
+						<div class="form-group {if !empty($cityErr)}has-error{/if}">
 							<label class="control-label col-sm-4">City:</label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" name="city" value="<?=$city?>"/>
-								<!-- <?php if (isset($validateErr['city'])) : ?>
-									<div class="help-block alert alert-danger alert-dismissable"><?=$validateErr['city'] ?></div>
-								<?php endif ?> -->
+								<input type="text" class="form-control" name="city" value="{$city}"/>
+								{if isset($cityErr)}
+									<div class="help-block alert alert-danger">{$cityErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['address'])) : ?>has-error <?php endif ?>">
+						<div class="form-group {if !empty($addressErr)}has-error{/if}">
 							<label class="control-label col-sm-4">Address:</label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" name="address" value="<?=$address?>" />
-								<!-- <?php if(isset($validateErr['address'])) : ?>
-									<div class="help-block alert alert-danger"><?=$validateErr['address'] ?></div>
-								<?php endif ?> -->
+								<input type="text" class="form-control" name="address" value="{$address}"/>
+								{if isset($addressErr)}
+									<div class="help-block alert alert-danger">{$addressErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['email'])) : ?>has-error <?php endif ?>">
+						<div class="form-group {if !empty($emailErr)}has-error{/if}">
 							<label class="control-label col-sm-4">E-mail Address</label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" name="email" value="<?=$email?>"/>
-								<!-- <?php if(isset($validateErr['email'])) : ?>
-									<div class="help-block alert alert-danger"><?=$validateErr['email'] ?></div>
-								<?php endif ?> -->
+								<input type="text" class="form-control" name="email" value="{$email}"/>
+								{if isset($emailErr)}
+									<div class="help-block alert alert-danger">{$emailErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['password'])) : ?>has-error <?php endif ?>">
+						<div class="form-group {if !empty($passwordErr)}has-error{/if}">
 							<label class="control-label col-sm-4">Password</label>
 							<div class="col-sm-6">
 								<input type="password" class="form-control" name="password"/>
-								<!-- <?php if (isset($validateErr['password'])) :?>
-									<div class="help-block alert alert-danger" ><?=$validateErr['password'] ?></div>
-								<?php endif ?> -->
+								{if isset($passwordErr)}
+									<div class="help-block alert alert-danger">{$passwordErr}</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
@@ -161,12 +151,12 @@
 					</div>
 					<div class="row">
 						<div class="col-md-4"></div>
-						<div class="col-md-5">
+						<div class="col-md-6">
 							<div class="form-group">
-								<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u" style="transform:scale(0.77);-webkit-transform:scale(0.90);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+								<div class="g-recaptcha" data-sitekey="6LfpnREUAAAAAJ6Jwg6CoWx7X9tx0mQp9G0PL-8u"></div>
 							</div>
 						</div>
-						<div class="col-md-3"></div>
+						<div class="col-md-2"></div>
 					</div>
 					<div class="row">
 						<div class="form-group center-block">
@@ -182,33 +172,29 @@
 						<div class="form-group center-block">
 							<div class="col-sm-2"></div>
 							<div class="col-xs-12 col-sm-8">
-								<?php if (!empty($signup)) : ?>
-								<div class="alert alert-success col-sm-12"><p style="text-align:center"><?=$signup?></p></div>
-								<?php endif ?>
-								<?php if (!empty($validateErr)) : ?>
-								<div class="help-block alert alert-danger">
-									<?php if(!empty($validateErr)) {
-									echo "<ul>";
-										foreach($validateErr as $error){
-											echo "<li>$error</li>";
-										}
-									echo "</ul>";
-									}
-									?>
-									<?php endif ?>
-								</div>
+								{if !empty($signup)}
+									<div class="alert alert-success col-sm-12"><p style="text-align:center">{$signup}</p></div>
+								{/if}
+								{if !empty($validateErr)}
+									<div class="help-block alert alert-danger">
+										<ul>
+											{foreach from=$validateErr item=error}
+												<li>{$error}</li>
+											{/foreach}
+										</ul>
+									</div>
+								{/if}
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
 				</form>
 			</div>
-			<div class="col-md-3 col-sm-2"></div>
+			<div class="col-md-3 col-sm-3"></div>
 		</div>
-	<?php endif ?>
+	{/if}
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>
-

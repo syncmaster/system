@@ -1,12 +1,12 @@
 <?php
 require ("libs/Smarty.class.php");
-include 'boot.php';
+include './boot.php';
+require_once '/mail_smarty.php';
 $smarty = new Smarty();
 
 $smarty->error_reporting = error_reporting() &~E_NOTICE;
 
 $title = "Welcome Smarty";
-
 
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
 $lastname = isset($_POST['lastname']) ? trim($_POST['lastname']) : '';
@@ -19,7 +19,6 @@ $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 $repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
 $signup = "";
 $validateErr = array();
-
 
 if (isset($_POST['signup'])) {
 	if (empty($firstname)) {
@@ -61,13 +60,14 @@ if (isset($_POST['signup'])) {
 	} else  {
 		$sql = "SELECT `email`
 			FROM users
-			WHERE `email` = '" . $connect->real_escape_string($email) . "' ";
+			WHERE
+			`email` = '" . $connect->real_escape_string($email) . "' ";
 		$emailresult = $connect->query($sql);
 		if ($emailresult->num_rows) {
 			$validateErr['email'] = "E-mail address is already registered";
 		}
 	}
-	
+
 	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
@@ -82,7 +82,7 @@ if (isset($_POST['signup'])) {
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
 	}
-	
+
 	if (!count($validateErr)) {
 		$password = md5($password);
 		$sql = "
@@ -108,13 +108,37 @@ if (isset($_POST['signup'])) {
 		";
 		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
-			header("refresh: 10 ;url=login.php");
+			$mail->Send();
+			//header("refresh: 10 ;url=login.php");
 		} else {
 			$signupErr = "something went wrong";
 		}
 	}
+//Variables for signup form
+	$smarty->assign('firstname', $firstname);
+	$smarty->assign('lastname', $lastname);
+	$smarty->assign('age', $age);
+	$smarty->assign('country', $country);
+	$smarty->assign('city', $city);
+	$smarty->assign('address', $address);
+	$smarty->assign('email', $email);
+	$smarty->assign('password', $password);
+	$smarty->assign('repassword', $repassword);
+	$smarty->assign('signup', $signup);
+	$smarty->assign('validateErr', $validateErr);
+
+//Errors
+	$smarty->assign('user', $_SESSION['user']);
+	$smarty->assign('firstnameErr', $validateErr['firstname']);
+	$smarty->assign('lastnameErr', $validateErr['lastname']);
+	$smarty->assign('ageErr', $validateErr['age']);
+	$smarty->assign('countryErr', $validateErr['country']);
+	$smarty->assign('cityErr', $validateErr['city']);
+	$smarty->assign('addressErr', $validateErr['address']);
+	$smarty->assign('emailErr', $validateErr['email']);
+	$smarty->assign('captcha', $validateErr['captcha']);
+	$smarty->assign('passwordErr', $validateErr['password']);
+
 }
-
-
+print_r($firstname);
 $smarty->display("index.html");
-
