@@ -1,6 +1,6 @@
 <?php
 require ("libs/Smarty.class.php");
-include './boot.php';
+include 'boot.php';
 require_once '/mail_smarty.php';
 $smarty = new Smarty();
 
@@ -20,43 +20,67 @@ $repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
 $signup = "";
 $validateErr = array();
 
+//Variables for signup form
+$smarty->assign('firstname', $firstname);
+$smarty->assign('lastname', $lastname);
+$smarty->assign('age', $age);
+$smarty->assign('country', $country);
+$smarty->assign('city', $city);
+$smarty->assign('address', $address);
+$smarty->assign('email', $email);
+$smarty->assign('password', $password);
+$smarty->assign('repassword', $repassword);
+
+
 if (isset($_POST['signup'])) {
 	if (empty($firstname)) {
 		$validateErr['firstname'] = "Please <b>Enter</b> your <b>FirstName</b> " ;
+		$smarty->assign('firstnameErr', $validateErr['firstname']);
 	} else if ((mb_strlen($firstname)) < 6 || (mb_strlen($firstname) > 20)){
 		$validateErr['firstname'] = "Please <b>Enter</b> your Firstname between 6 and 20 symbols ";
+		$smarty->assign('firstnameErr', $validateErr['firstname']);
 	}
 
 	if (empty($lastname)) {
 		$validateErr['lastname'] = "Please <b>Enter</b> your <b>Lastname</b> ";
+		$smarty->assign('lastnameErr', $validateErr['lastname']);
 	} else if ((mb_strlen($lastname)) < 6 || (mb_strlen($lastname) > 20)) {
 		$validateErr['lastname'] = "Please <b>Enter</b> your <b>Lastname</b> between 6 and 20 symbols ";
+		$smarty->assign('lastnameErr', $validateErr['lastname']);
 	}
 
 	if (empty($age)) {
 		$validateErr['age'] = "Please <b>Enter</b> your <b>Ages</b>! ";
+		$smarty->assign('ageErr', $validateErr['age']);
 	} else if (($age <= 13) || ($age > 99)) {
 		$validateErr['age'] = "Please <b>Enter</b> ages between <b>13 and 99</b>! ";
+		$smarty->assign('ageErr', $validateErr['age']);
 	}
 
 	if (empty($country)) {
 		$validateErr['country'] = "Please choose your <b>Country</b>!";
+		$smarty->assign('countryErr', $validateErr['country']);
 	}
 
 	if (empty($city)) {
 		$validateErr['city'] = "Please <b>Enter</b> your <b>City</b>! ";
+		$smarty->assign('cityErr', $validateErr['city']);
 	} else if (mb_strlen($city)> 30) {
 		$validateErr['city'] = "Please <b>Enter</b> <b>city</b> less than <b>30 symbols</b>!";
+		$smarty->assign('cityErr', $validateErr['city']);
 	}
 
 	if (empty($address)) {
 		$validateErr['address'] = "Please <b><b>Enter</b></b> your <b>Address</b>! ";
+		$smarty->assign('addressErr', $validateErr['address']);
 	}
 
 	if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$validateErr['email'] = "Your <b>E-mail</b> is <b>not valid</b>! ";
+		$smarty->assign('emailErr', $validateErr['email']);
 	} else if (empty($email)) {
 		$validateErr['email'] = "Please <b>Enter</b> your <b>E-mail Address</b>! ";
+		$smarty->assign('emailErr', $validateErr['email']);
 	} else  {
 		$sql = "SELECT `email`
 			FROM users
@@ -65,22 +89,27 @@ if (isset($_POST['signup'])) {
 		$emailresult = $connect->query($sql);
 		if ($emailresult->num_rows) {
 			$validateErr['email'] = "E-mail address is already registered";
+			$smarty->assign('emailErr', $validateErr['email']);
 		}
 	}
 
 	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
-	if($response["success"] === false){
+	if ($response["success"] === false){
         $validateErr['captcha'] = "Please complete reCaptcha";
+		$smarty->assign('captcha', $validateErr['captcha']);
 	}
 
 	if (empty($password) || empty($repassword)) {
 		$validateErr['password'] = "Please <b>Enter</b> your <b>Password</b>! ";
+		$smarty->assign('passwordErr', $validateErr['password']);
 	} else if ($password !== $repassword) {
 		$validateErr['password'] =  "Your <b>password</b> did <b>not match</b>! ";
+		$smarty->assign('passwordErr', $validateErr['password']);
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
+		$smarty->assign('passwordErr', $validateErr['password']);
 	}
 
 	if (!count($validateErr)) {
@@ -109,36 +138,12 @@ if (isset($_POST['signup'])) {
 		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
 			$mail->Send();
+			$smarty->assign('signup', $signup);
 			//header("refresh: 10 ;url=login.php");
 		} else {
 			$signupErr = "something went wrong";
 		}
 	}
-//Variables for signup form
-	$smarty->assign('firstname', $firstname);
-	$smarty->assign('lastname', $lastname);
-	$smarty->assign('age', $age);
-	$smarty->assign('country', $country);
-	$smarty->assign('city', $city);
-	$smarty->assign('address', $address);
-	$smarty->assign('email', $email);
-	$smarty->assign('password', $password);
-	$smarty->assign('repassword', $repassword);
-	$smarty->assign('signup', $signup);
-	$smarty->assign('validateErr', $validateErr);
-
-//Errors
-	$smarty->assign('user', $_SESSION['user']);
-	$smarty->assign('firstnameErr', $validateErr['firstname']);
-	$smarty->assign('lastnameErr', $validateErr['lastname']);
-	$smarty->assign('ageErr', $validateErr['age']);
-	$smarty->assign('countryErr', $validateErr['country']);
-	$smarty->assign('cityErr', $validateErr['city']);
-	$smarty->assign('addressErr', $validateErr['address']);
-	$smarty->assign('emailErr', $validateErr['email']);
-	$smarty->assign('captcha', $validateErr['captcha']);
-	$smarty->assign('passwordErr', $validateErr['password']);
-
+$smarty->assign('validateErr', $validateErr);
 }
-print_r($firstname);
 $smarty->display("index.html");

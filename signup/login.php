@@ -93,7 +93,7 @@ if (isset($_POST['submit'])) {
 			}
 			.g-recaptcha {
 				transform:scale(0.77);
-				-webkit-transform:scale(0.90);
+				-webkit-transform:scale(0.77);
 				transform-origin:left top;
 				-webkit-transform-origin:0 0;
 			}
