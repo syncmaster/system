@@ -1,5 +1,6 @@
 <?php
-require_once '../phpmail/PHPMailerAutoload.php';
+require_once 'phpmail/PHPMailerAutoload.php';
+
 $mail = new PHPMailer;
 $smarty = new Smarty();
 $smarty->error_reporting = error_reporting() &~E_NOTICE;
