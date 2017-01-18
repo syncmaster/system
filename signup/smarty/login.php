@@ -13,6 +13,9 @@ if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 	$password = isset($_POST['password']) ? trim($_POST['password']) : '';
 	$utcdiff = isset($_POST['utcdiff']) ? trim($_POST['utcdiff']) : '';
+	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+	$response = json_decode($response, true);
 
 	//Variables in smarty
 	$smarty->assign('email', $email);
@@ -29,15 +32,9 @@ if (isset($_POST['submit'])) {
 		$emailErr['empty'] = "Please enter the email and password fields";
 	} else if (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
+	} else if ($response['success'] === false) {
+		$emailErr['valid'] = 'Please complete reCaptcha';
 	} else {
-		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
-		$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
-		$response = json_decode($response, true);
-
-		if ($response['success'] === false) {
-			$emailErr['valid'] = 'Please complete reCaptcha';
-			
-		} else {
 			$password = md5($password);
 			$sql = "SELECT
 						`id`,
@@ -90,7 +87,7 @@ if (isset($_POST['submit'])) {
 				echo $connect->connect_error;
 			}
 		}
-	}
+	
 $smarty->assign('emailErr', $emailErr);
 }
 $smarty->display("login.html");

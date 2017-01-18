@@ -9,6 +9,9 @@ if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 	$password = isset($_POST['password']) ? trim($_POST['password']) : '';
 	$utcdiff = isset($_POST['utcdiff']) ? trim($_POST['utcdiff']) : '';
+	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+	$response = json_decode($response, true);
 
 	if (isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) < TIMEOUT) {
 		$emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
@@ -18,12 +21,8 @@ if (isset($_POST['submit'])) {
 		$_SESSION['fail'] = 0;
 	} else if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
-		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
-		$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
-		$response = json_decode($response, true);
-		if($response["success"] === false) {
-			$emailErr['valid'] = "Please complete reCaptcha";
-	}
+	} else if ($response["success"] === false) {
+		$emailErr['valid'] = "Please complete reCaptcha";
 	} else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
 	} else {
@@ -68,7 +67,7 @@ if (isset($_POST['submit'])) {
 					exit;
 				} else {
 					session_destroy();
-				}			
+				}
 			}
 		} else {
 			echo "Error!";
