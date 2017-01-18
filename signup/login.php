@@ -3,8 +3,8 @@ include 'boot.php';
 include_once 'browser.func.php';
 define('TIMEOUT', 5*60);
 
-
 $emailErr = array ( );
+
 if (isset($_POST['submit'])) {
 	$email = isset($_POST['email']) ? trim($_POST['email']) : '';
 	$password = isset($_POST['password']) ? trim($_POST['password']) : '';
@@ -13,17 +13,17 @@ if (isset($_POST['submit'])) {
 	if (isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) < TIMEOUT) {
 		$emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
 	} else if (isset($_SESSION['fail']) && $_SESSION['fail'] >= 3) {
-        $emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
+		$emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
 		$_SESSION['timeout'] = time();
 		$_SESSION['fail'] = 0;
 	} else if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
-		/*$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
-        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
-        $response = json_decode($response, true);
+		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+		$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+		$response = json_decode($response, true);
 		if($response["success"] === false) {
-            $emailErr['valid'] = "Please complete reCaptcha";
-        }*/
+			$emailErr['valid'] = "Please complete reCaptcha";
+	}
 	} else if  (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
 	} else {
@@ -63,13 +63,16 @@ if (isset($_POST['submit'])) {
 						'" .$connect->real_escape_string($yourbrowser). "'
 					)
 				";
-				$connect->query($sql);
-				header("Location:myprofile.php");
-				exit;
+				if ($connect->query($sql)) {
+					header("Location:myprofile.php");
+					exit;
+				} else {
+					session_destroy();
+				}			
 			}
 		} else {
 			echo "Error!";
-			echo $connect->connect_error;
+			echo $connect->error;
 		}
 	}
 }

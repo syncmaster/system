@@ -14,7 +14,6 @@ $repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
 $signup = "";
 $validateErr = array();
 
-
 if (isset($_POST['signup'])) {
 	if (empty($firstname)) {
 		$validateErr['firstname'] = "Please <b>Enter</b> your <b>FirstName</b>" ;
@@ -52,7 +51,7 @@ if (isset($_POST['signup'])) {
 		$validateErr['email'] = "Your <b>E-mail</b> is <b>not valid</b>! ";
 	} else if (empty($email)) {
 		$validateErr['email'] = "Please <b>Enter</b> your <b>E-mail Address</b>! ";
-	} else  {
+	} else {
 		$sql = "SELECT `email`
 			FROM users
 			WHERE
@@ -63,17 +62,17 @@ if (isset($_POST['signup'])) {
 		}
 	}
 
-/*	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
 	if($response["success"] === false){
-        $validateErr['captcha'] = "Please complete reCaptcha";
+		$validateErr['captcha'] = "Please complete reCaptcha";
 	}
-*/
+
 	if (empty($password) || empty($repassword)) {
 		$validateErr['password'] = "Please <b>Enter</b> your <b>Password</b>! ";
 	} else if ($password !== $repassword) {
-		$validateErr['password'] =  "Your <b>password</b> did <b>not match</b>! ";
+		$validateErr['password'] = "Your <b>password</b> did <b>not match</b>! ";
 	} else if (strlen($password) < 8 ) {
 		$validateErr['password']  = "Your Password must contain a <b>8 characters</b>! ";
 	}
@@ -103,7 +102,6 @@ if (isset($_POST['signup'])) {
 		";
 		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
-			//PHP Mail send with successful sing up
 			$mail->Send();
 			header("refresh: 2 ;url=login.php");
 		} else {
@@ -152,7 +150,7 @@ if (isset($_POST['signup'])) {
 			<div class="col-md-6 signup col-sm-6">
 				<form action="index.php" method="post" class="form-horizontal" name="register">
 					<div class="row">
-						<div class="form-group <?php if (!empty($validateErr['firstname'])): ?>has-error<?php endif ?>">
+						<div class="form-group <?php if (!empty($validateErr['firstname'])) : ?>has-error<?php endif ?>">
 							<label class="control-label col-sm-4">FirstName:</label>
 							<div class="col-sm-6">
 								<input type="text" class="form-control" value="<?=$firstname;?>" name="firstname"/>
@@ -202,7 +200,6 @@ if (isset($_POST['signup'])) {
 								<!-- <?php if (isset($validateErr['country'])) : ?>
 									<div class="help-block alert alert-danger"><?=$validateErr['country'] ?></div>
 								<?php endif ?> -->
-
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
