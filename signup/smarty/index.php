@@ -31,7 +31,6 @@ $smarty->assign('email', $email);
 $smarty->assign('password', $password);
 $smarty->assign('repassword', $repassword);
 
-
 if (isset($_POST['signup'])) {
 	if (empty($firstname)) {
 		$validateErr['firstname'] = "Please <b>Enter</b> your <b>FirstName</b> " ;
@@ -81,7 +80,7 @@ if (isset($_POST['signup'])) {
 	} else if (empty($email)) {
 		$validateErr['email'] = "Please <b>Enter</b> your <b>E-mail Address</b>! ";
 		$smarty->assign('emailErr', $validateErr['email']);
-	} else  {
+	} else {
 		$sql = "SELECT `email`
 			FROM users
 			WHERE
@@ -97,7 +96,7 @@ if (isset($_POST['signup'])) {
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
 	if ($response["success"] === false){
-        $validateErr['captcha'] = "Please complete reCaptcha";
+		$validateErr['captcha'] = "Please complete reCaptcha";
 		$smarty->assign('captcha', $validateErr['captcha']);
 	}
 
@@ -139,7 +138,7 @@ if (isset($_POST['signup'])) {
 			$signup = "Your account had been created..!";
 			$mail->Send();
 			$smarty->assign('signup', $signup);
-			//header("refresh: 10 ;url=login.php");
+			header("refresh: 10 ;url=login.php");
 		} else {
 			$signupErr = "something went wrong";
 		}

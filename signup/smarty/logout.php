@@ -6,5 +6,4 @@ session_start();
 session_destroy();
 header ("Location:home.php");
 
-
 $smarty->display("logout.html");

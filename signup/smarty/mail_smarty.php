@@ -17,8 +17,6 @@ $smarty->assign('secmsg', $secmsg);
 
 $message = $smarty->fetch('templates/mail.html');
 
-
-
 $mail->isSMTP();
 $mail->SMTPAuth = true;
 

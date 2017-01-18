@@ -22,7 +22,7 @@ if (isset($_POST['submit'])) {
 	if (isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) < TIMEOUT) {
 		$emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
 	} else if (isset($_SESSION['fail']) && $_SESSION['fail'] >= 3) {
-        $emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
+		$emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
 		$_SESSION['timeout'] = time();
 		$_SESSION['fail'] = 0;
 	} else if (empty($email) || empty($password)) {
@@ -31,13 +31,13 @@ if (isset($_POST['submit'])) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
 	} else {
 		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
-        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
-        $response = json_decode($response, true);
+		$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
+		$response = json_decode($response, true);
 
 		if ($response['success'] === false) {
-            $emailErr['valid'] = 'Please complete reCaptcha';
+			$emailErr['valid'] = 'Please complete reCaptcha';
 			
-        } else {
+		} else {
 			$password = md5($password);
 			$sql = "SELECT
 						`id`,
