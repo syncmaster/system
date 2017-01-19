@@ -30,22 +30,22 @@ if (isset($_POST['submit'])) {
 		$_SESSION['fail'] = 0;
 	} else if (empty($email) || empty($password)) {
 		$emailErr['empty'] = "Please enter the email and password fields";
-	} else if (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
+	} else if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Your e-mail address is not valid!";
-	} else if ($response['success'] === false) {
+	}/* else if ($response['success'] === false) {
 		$emailErr['valid'] = 'Please complete reCaptcha';
-	} else {
-			$password = md5($password);
+	}*/ else {
 			$sql = "SELECT
 						`id`,
 						`firstname`,
-						`lastname`
+						`lastname`,
+						`password`
 					FROM `users`
 					WHERE
 						`email` = '" . $connect->real_escape_string($email) . "'
-						AND `password` = '" . $connect->real_escape_string($password) ."'
 					LIMIT 1";
-			if (($result = $connect->query($sql))) {
+			if ($result = $connect->query($sql)) {
+				 
 				if (!$result->num_rows) {
 					$emailErr['user'] = "Invalid user! Your information is not in our database";
 
@@ -55,18 +55,19 @@ if (isset($_POST['submit'])) {
 						$_SESSION['fail'] = 1;
 					}
 
-				} else {
+				} else { 
+					
 					$user = $result->fetch_assoc() ;
-					$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."\n";
-					$userid = $user['id'];
-					$_SESSION['user'] = $loginuser;
-					$_SESSION['utcdiff'] = $utcdiff;
-
-					//variables smarty
-					$smarty->assign('loginuser', $loginuser);
-					$smarty->assign('utcdiff', $_SESSION['utcdiff']);
-
-					$sql = "
+					
+					
+					if (password_verify($password, $user['password'])) {
+						$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."\n";
+						$userid = $user['id'];
+						$_SESSION['user'] = $loginuser;
+						$_SESSION['utcdiff'] = $utcdiff;
+						$smarty->assign('loginuser', $loginuser);
+						$smarty->assign('utcdiff', $_SESSION['utcdiff']);
+						$sql = "
 							INSERT INTO logininfo (
 								`user_id`,
 								`date`,
@@ -76,11 +77,17 @@ if (isset($_POST['submit'])) {
 								NOW(),
 								'" .$connect->real_escape_string($yourbrowser). "'
 							)
-					";
-					$connect->query($sql);
+						";
+						$connect->query($sql);
+						header("Location: myprofile.php");
+						exit;
+					} else {
+						$emailErr['user'] = "Invalid user! Your information is not in our database";
+					}
+					//variables smarty
 
-					header("Location: myprofile.php");
-					exit;
+
+					
 				}
 			} else {
 				echo "Error!";

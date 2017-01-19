@@ -1,0 +1,15 @@
+
+	.signup{
+		background-color: #B0C4DE;
+	}
+/*	.row{
+		margin: 0;
+		padding: 0;
+	}
+*/	
+	.g-recaptcha {
+		transform:scale(0.65);
+		-webkit-transform:scale(0.65);
+		transform-origin:left top;
+		-webkit-transform-origin:0 0;
+	}

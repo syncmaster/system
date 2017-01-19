@@ -20,6 +20,7 @@ $repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
 $signup = "";
 $validateErr = array();
 
+
 //Variables for signup form
 $smarty->assign('firstname', $firstname);
 $smarty->assign('lastname', $lastname);
@@ -112,7 +113,7 @@ if (isset($_POST['signup'])) {
 	}
 
 	if (!count($validateErr)) {
-		$password = md5($password);
+		$password = password_hash($password, PASSWORD_DEFAULT);
 		$sql = "
 			INSERT INTO users (
 				`firstname`,

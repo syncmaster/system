@@ -1,0 +1,13 @@
+когато искаме да добавим нови колони в колоните трябва да добавим първо 
+<div class="row"></div>и в него да си задаваме отново другите колони
+пример:
+<div id="container"">
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="row">
+				<div class="col-sm-4"></div>
+			</div>
+		</div>
+	</div>
+</div>
+ 
