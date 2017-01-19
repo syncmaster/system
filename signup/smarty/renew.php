@@ -3,6 +3,7 @@
 require ("libs/Smarty.class.php");
 include 'boot.php';
 
+define('TIMEOUT', 1*60);
 $smarty = new Smarty();
 $smarty->error_reporting = error_reporting() &~E_NOTICE;
 $success = "";
@@ -15,10 +16,12 @@ if (isset($_POST['submit'])) {
 	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
 	$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 	$response = json_decode($response, true);
-	
+
 	$smarty->assign("password", $password);
 	
-	if (empty($password) || empty($repassword)) {
+	if (isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) < TIMEOUT) {
+		$passErr['loginerr'] = "Your time has expired please go back and renew your token before renew password";
+	} else if (empty($password) || empty($repassword)) {
 		$passErr['empty'] = "Please fill the fileds";
 		$smarty->assign("passErr", $passErr['empty']);
 	} else if ($password !== $repassword) {
@@ -32,11 +35,11 @@ if (isset($_POST['submit'])) {
 		$smarty->assign("passErr", $passErr['captcha']);
 	} else {
 		$password = password_hash($password, PASSWORD_DEFAULT);
-		$sql = "UPDATE users SET 
+		$sql = "UPDATE users SET
 		`password` = '" .$connect->real_escape_string($password). "'
 		WHERE
-		`email` = '" .$connect->real_escape_string($_SESSION['user']). "' 
-		AND 
+		`email` = '" .$connect->real_escape_string($_SESSION['user']). "'
+		AND
 		`tokens` = '" .$connect->real_escape_string($_SESSION['token']). "'
 		";
 		if($connect->query($sql)) {
@@ -46,15 +49,15 @@ if (isset($_POST['submit'])) {
 			$fail = "We not change your password please back after few hours.";
 			$smarty->assign("fail", $fail);
 		}
-		
-		
+
+
 	}
-	
-	
-$smarty->assign("passErr", $passErr);	
+
+
+$smarty->assign("passErr", $passErr);
 }
 
 
-$smarty->display("renew.html");	
+$smarty->display("renew.html");
 
 
