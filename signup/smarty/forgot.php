@@ -1,7 +1,7 @@
 <?php
 require ("libs/Smarty.class.php");
 include 'boot.php';
-require_once '/mail_password.php';
+//require_once '/mail_password.php';
 
 $smarty = new Smarty();
 $smarty->error_reporting = error_reporting() &~E_NOTICE;
@@ -51,11 +51,12 @@ if (isset($_POST['submit'])) {
 			$smarty->assign("reset", $reset);
 			$_SESSION['user'] = $email;
 			$_SESSION['token'] = $random;
+			$_SESSION['timeout'] = time();
 			$smarty->assign("reset", $reset);
 			$url = '/smarty/renew.php?token='.$_SESSION['token'] ;
 			$smarty->assign("url", $url);
-			$mail->send();
-			echo $url;
+			echo $_SESSION['timeout'];
+			//$mail->send();
 		}
 
 	}
