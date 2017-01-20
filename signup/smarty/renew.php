@@ -79,17 +79,21 @@ if (isset($_POST['submit'])) {
 	} else {
 		$password = password_hash($password, PASSWORD_DEFAULT);
 		$sql = "UPDATE users SET
-		`password` = '" .$connect->real_escape_string($password). "'
-		WHERE
-		`email` = '" .$connect->real_escape_string($_SESSION['user']). "'
-		AND
-		`tokens` = '" .$connect->real_escape_string($_GET['token']). "'
-		";
-		$email_add = $datata['user'] ;
-		$print_r($email_add);
+					`password` = '" .$connect->real_escape_string($password). "'
+				WHERE
+					`tokens` = '" .$connect->real_escape_string($_GET['token']). "'
+				";
+		
 		if($connect->query($sql)) {
 			$success = "We changed your password succesfully !!!";
 			$smarty->assign("success", $success);
+			
+			$sql = "UPDATE `users` SET
+						`tokens` = ''
+					WHERE
+						`tokens` = '" .$_GET['token']. "';
+						";
+			$connect->query($sql);	
 		} else {
 			$fail = "We not change your password please back after few hours.";
 			$smarty->assign("fail", $fail);
