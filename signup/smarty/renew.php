@@ -1,16 +1,61 @@
 <?php
 
-require ("libs/Smarty.class.php");
+require ("settings.php");
 include 'boot.php';
 
-define('TIMEOUT', 1*60);
-$smarty = new Smarty();
-$smarty->error_reporting = error_reporting() &~E_NOTICE;
+define('TIMEOUT', 2*60*60);
+
 $success = "";
 $passErr = array();
 
+
+
+if (!isset($_GET['token'])) {
+	$tokenErr = "your link is not valid Back to ->";
+	$smarty->assign("tokenErr", $tokenErr);
+	header("refresh: 4, url=forgot.php");
+} else {
+	$sql = "SELECT `tokens`
+			FROM `users`
+			WHERE
+			`tokens` = '" .$_GET['token']. "'
+			";
+	if ($result = $connect->query($sql)) {
+		if (!$result->num_rows) {
+			$tokenErr = "your link is not valid Back to ->";
+			$smarty->assign("tokenErr", $tokenErr);
+			header("refresh: 4, url=forgot.php");
+		} else {
+			$user = $result->fetch_assoc() ;
+			
+			if ($_GET['token'] !==$user['tokens']) {
+				$tokenErr = "your link is not valid Back to ->";
+			$smarty->assign("tokenErr", $tokenErr);
+			header("refresh: 4, url=forgot.php");
+			} else {
+				$tokens = $_GET['token'];
+				$smarty->assign("tokenkey", $tokens);
+			} 
+		}
+	}		
+}
+
+/*if (!isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) > TIMEOUT) {
+		$sql = "UPDATE `users`
+				SET
+		`tokens`='' 
+		WHERE email=''
+		`email` = '" .$connect->real_escape_string($_SESSION['user']). "'";
+		$connect->query($sql);
+		header("refresh, 4:url=renew.php");
+	} else if (!isset($_SESSION['user']) && !isset($_SESSION['token'])) {
+		$passErr['loginerr'] = "Your time has expired please go back and renew your token before renew password";
+		$smarty->assign("session", $passErr['loginerr']);
+	}
+*/	
+
 if (isset($_POST['submit'])) {
-	
+
 	$password = isset($_POST['password']) ? trim($_POST['password']) : '';
 	$repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
 	$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
@@ -19,9 +64,7 @@ if (isset($_POST['submit'])) {
 
 	$smarty->assign("password", $password);
 	
-	if (isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) < TIMEOUT) {
-		$passErr['loginerr'] = "Your time has expired please go back and renew your token before renew password";
-	} else if (empty($password) || empty($repassword)) {
+	 if (empty($password) || empty($repassword)) {
 		$passErr['empty'] = "Please fill the fileds";
 		$smarty->assign("passErr", $passErr['empty']);
 	} else if ($password !== $repassword) {
@@ -40,8 +83,10 @@ if (isset($_POST['submit'])) {
 		WHERE
 		`email` = '" .$connect->real_escape_string($_SESSION['user']). "'
 		AND
-		`tokens` = '" .$connect->real_escape_string($_SESSION['token']). "'
+		`tokens` = '" .$connect->real_escape_string($_GET['token']). "'
 		";
+		$email_add = $datata['user'] ;
+		$print_r($email_add);
 		if($connect->query($sql)) {
 			$success = "We changed your password succesfully !!!";
 			$smarty->assign("success", $success);
@@ -49,14 +94,10 @@ if (isset($_POST['submit'])) {
 			$fail = "We not change your password please back after few hours.";
 			$smarty->assign("fail", $fail);
 		}
-
-
 	}
-
 
 $smarty->assign("passErr", $passErr);
 }
-
 
 $smarty->display("renew.html");
 

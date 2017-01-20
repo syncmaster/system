@@ -1,10 +1,8 @@
 <?php
-require ("libs/Smarty.class.php");
 include 'boot.php';
-//require_once '/mail_password.php';
+require ("settings.php");
 
-$smarty = new Smarty();
-$smarty->error_reporting = error_reporting() &~E_NOTICE;
+
 $reset = "";
 $emailErr = array();
 
@@ -22,10 +20,10 @@ if (isset($_POST['submit'])) {
 	} else if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		$emailErr['valid'] = "Please enter Valid Email-Address";
 		$smarty->assign("emailErr", $emailErr['valid']);
-	} else if ($response['success'] === false) {
+	} /*else if ($response['success'] === false) {
 		$emailErr['captcha'] = "Please fill the captcha";
 		$smarty->assign("emailErr", $emailErr['captcha']);
-	} else {
+	} */else {
 		$sql = "SELECT `email`
 			FROM users
 			WHERE
@@ -42,21 +40,32 @@ if (isset($_POST['submit'])) {
 	if (!count($emailErr)) {
 		$random = substr(md5(microtime()),rand(0,26));
 		$sql = "UPDATE users SET
-		tokens = '" .$connect->real_escape_string($random). "',
-		date = NOW()
+		`tokens` = '" .$connect->real_escape_string($random). "',
+		`expire_date` = NOW()
 		WHERE
 		`email` = '" .$connect->real_escape_string($email). "' ";
 		if ($connect->query($sql)) {
 			$reset = "Check your e-mail for your unique link to renew password";
 			$smarty->assign("reset", $reset);
-			$_SESSION['user'] = $email;
-			$_SESSION['token'] = $random;
-			$_SESSION['timeout'] = time();
-			$smarty->assign("reset", $reset);
-			$url = '/smarty/renew.php?token='.$_SESSION['token'] ;
+			$token = $random;
+			$exp_time = time();
+			$url = 'http://'. $_SERVER['HTTP_HOST'] . '/exercises/signup/smarty/renew.php?token='.$token ;
 			$smarty->assign("url", $url);
-			echo $_SESSION['timeout'];
-			//$mail->send();
+			$smarty->assign("email", $email);
+			
+			$title = "Welcome to our website |www.domain.com|";
+			$messege = "Hello";
+			$headtext = "We send you e-mail with unique link</br>Where you can renew your password;";
+			$secmsg = "Please click link and you will be redirect to a page";
+			$smarty->assign('title', $title);
+			$smarty->assign('messege', $messege);
+			$smarty->assign('headtext', $headtext);
+			$smarty->assign('secmsg', $secmsg);
+			$mail->Subject = 'Reset Your Password';
+			$mail->addAddress($email);
+			$message = $smarty->fetch('templates/mail_password.html');
+			$mail->MsgHTML($message);
+			$mail->send();
 		}
 
 	}

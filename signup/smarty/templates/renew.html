@@ -10,13 +10,16 @@
 	</head>
 	<body>
 		<div class="container">
+		{if NOT empty($tokenErr)}
+			<div class="help-block alert alert-danger">{$tokenErr} |<a href="forgot.php">Forgot Password</a>| and request new link to youe email</div>
+		{else}	
 			<div class="row">
 				<div class="col-md-3"></div>
 				<div class="col-md-6 signup">
 					<div class="row">
 						<div class="col-md-3"></div>
 						<div class="col-md-6">
-							<form method="post" action="renew.php" class="form-horizontal" name="forgot">
+							<form method="post" action="renew.php?token={$tokenkey}" class="form-horizontal" name="forgot">
 								<div class="row">
 									<div class="form-group">
 										<label class="col-md-3 control-label">Password:</label>
@@ -51,10 +54,11 @@
 								</div>
 								<div class="row">
 									<div class="col-md-12 col-xs-12">
-										{if NOT empty($success)} 
-											<div class="help-block alert alert-success">{$success}</div>
-										{else}
-											<div class="help-block alert alert-success">{$fail}</div>
+										{if NOT empty($success)}
+											<div class="alert alert-success col-sm-12"><p>{$success}</p></div>
+										{/if}
+										{if NOT empty($fail)}
+											<div class="alert alert-danger col-sm-12"><p>{$fail}</p></div>
 										{/if}	
 										{if NOT empty($passErr)}
 											<div class="help-block alert alert-danger">
@@ -74,6 +78,7 @@
 				</div>
 				<div class="col-md-3"></div>
 			</div>
+		{/if}
 		</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
