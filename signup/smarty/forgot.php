@@ -48,11 +48,9 @@ if (isset($_POST['submit'])) {
 			$reset = "Check your e-mail for your unique link to renew password";
 			$smarty->assign("reset", $reset);
 			$token = $random;
-			$exp_time = time();
 			$url = 'http://'. $_SERVER['HTTP_HOST'] . '/exercises/signup/smarty/renew.php?token='.$token ;
 			$smarty->assign("url", $url);
 			$smarty->assign("email", $email);
-			
 			$title = "Welcome to our website |www.domain.com|";
 			$messege = "Hello";
 			$headtext = "We send you e-mail with unique link</br>Where you can renew your password;";

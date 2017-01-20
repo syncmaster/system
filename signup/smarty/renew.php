@@ -33,8 +33,20 @@ if (!isset($_GET['token'])) {
 			$smarty->assign("tokenErr", $tokenErr);
 			header("refresh: 4, url=forgot.php");
 			} else {
-				$tokens = $_GET['token'];
-				$smarty->assign("tokenkey", $tokens);
+				$sql = "SELECT `expire_date`,`email`
+						FROM `users`
+						WHERE
+						`tokens` = '" .$_GET['token']. "'";
+				$result = $connect->query($sql);
+				$result->num_rows;
+				$expire_date= $result->fetch_assoc();
+				$nowdate = time();
+				if (($nowdate - $expire_date['expire_date']) > 24*60*60) {
+					$tokenErr = "your link has expired Back to ->";
+				} else {
+					$tokens = $_GET['token'];
+					$smarty->assign("tokenkey", $tokens);
+				}
 			} 
 		}
 	}		
