@@ -7,13 +7,11 @@ define('TIMEOUT', 2*60*60);
 
 $success = "";
 $passErr = array();
-
-
-
+		
 if (!isset($_GET['token'])) {
 	$tokenErr = "your link is not valid Back to ->";
 	$smarty->assign("tokenErr", $tokenErr);
-	header("refresh: 4, url=forgot.php");
+	header("refresh: 10, url=forgot.php");
 } else {
 	$sql = "SELECT `tokens`
 			FROM `users`
@@ -24,47 +22,22 @@ if (!isset($_GET['token'])) {
 		if (!$result->num_rows) {
 			$tokenErr = "your link is not valid Back to ->";
 			$smarty->assign("tokenErr", $tokenErr);
-			header("refresh: 4, url=forgot.php");
+			header("refresh: 10, url=forgot.php");
 		} else {
 			$user = $result->fetch_assoc() ;
 			
 			if ($_GET['token'] !==$user['tokens']) {
 				$tokenErr = "your link is not valid Back to ->";
 			$smarty->assign("tokenErr", $tokenErr);
-			header("refresh: 4, url=forgot.php");
+			header("refresh: 10, url=forgot.php");
 			} else {
-				$sql = "SELECT `expire_date`,`email`
-						FROM `users`
-						WHERE
-						`tokens` = '" .$_GET['token']. "'";
-				$result = $connect->query($sql);
-				$result->num_rows;
-				$expire_date= $result->fetch_assoc();
-				$nowdate = time();
-				if (($nowdate - $expire_date['expire_date']) > 24*60*60) {
-					$tokenErr = "your link has expired Back to ->";
-				} else {
-					$tokens = $_GET['token'];
-					$smarty->assign("tokenkey", $tokens);
-				}
+				$tokens = $_GET['token'];
+				$smarty->assign("tokenkey", $tokens);	
 			} 
 		}
 	}		
 }
 
-/*if (!isset($_SESSION['timeout']) && (time() - $_SESSION['timeout']) > TIMEOUT) {
-		$sql = "UPDATE `users`
-				SET
-		`tokens`='' 
-		WHERE email=''
-		`email` = '" .$connect->real_escape_string($_SESSION['user']). "'";
-		$connect->query($sql);
-		header("refresh, 4:url=renew.php");
-	} else if (!isset($_SESSION['user']) && !isset($_SESSION['token'])) {
-		$passErr['loginerr'] = "Your time has expired please go back and renew your token before renew password";
-		$smarty->assign("session", $passErr['loginerr']);
-	}
-*/	
 
 if (isset($_POST['submit'])) {
 
