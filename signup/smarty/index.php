@@ -1,10 +1,6 @@
 <?php
-require ("libs/Smarty.class.php");
-include 'boot.php';
-require_once '/mail_smarty.php';
-$smarty = new Smarty();
 
-$smarty->error_reporting = error_reporting() &~E_NOTICE;
+include 'boot.php';
 
 $title = "Welcome Smarty";
 
@@ -137,6 +133,20 @@ if (isset($_POST['signup'])) {
 		";
 		if ($connect->query($sql)) {
 			$signup = "Your account had been created..!";
+			
+			$title = "Welcome to our website |www.domain.com|";
+			$messege = "Thank you for sign up in our website";
+			$headtext = "We apreciate your account and we are here to help you wuth what we can</br>Feel Free to contact with us whn u have any question about your profile or some suggestions?";
+			$secmsg = "Have a nice day";
+			$smarty->assign('title', $title);
+			$smarty->assign("email", $email);
+			$smarty->assign('messege', $messege);
+			$smarty->assign('headtext', $headtext);
+			$smarty->assign('secmsg', $secmsg);
+			$mail->Subject = 'Thank you for your sign up';
+			$mail->addAddress($email);
+			$message = $smarty->fetch('templates/mail.html');
+			$mail->MsgHTML($message);
 			$mail->Send();
 			$smarty->assign('signup', $signup);
 			header("refresh: 10 ;url=login.php");

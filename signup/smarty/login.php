@@ -1,10 +1,8 @@
 <?php
-require ("libs/Smarty.class.php");
 include 'boot.php';
 include_once 'browser.func.php';
 
-$smarty = new Smarty();
-$smarty->error_reporting = error_reporting() &~E_NOTICE;
+
 
 define('TIMEOUT', 5*60);
 
