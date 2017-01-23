@@ -95,4 +95,4 @@ if (isset($_POST['submit'])) {
 	
 $smarty->assign('emailErr', $emailErr);
 }
-$smarty->display("login.html");
+$smarty->display("../templates/login.html");

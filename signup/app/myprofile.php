@@ -1,5 +1,5 @@
 <?php
-include './app/boot.php';
+include 'boot.php';
 
 
 
@@ -15,4 +15,4 @@ if (empty($user)) {
 	header("refresh: 5,url=login.php");
 }
 
-$smarty->display("myprofile.html");
+$smarty->display("../templates/myprofile.html");

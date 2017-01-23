@@ -1,6 +1,6 @@
 <?php
 
-include 'boot.php';
+include $_SERVER['DOCUMENT_ROOT'].'/exercises/signup/app/boot.php';
 
 $title = "Welcome Smarty";
 

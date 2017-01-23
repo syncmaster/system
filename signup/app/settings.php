@@ -1,5 +1,5 @@
 <?php
-require_once './libs/phpmail/PHPMailerAutoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/exercises/signup/libs/phpmail/PHPMailerAutoload.php';
 //database info
 $database = "signupform";
 $user_db = "root";

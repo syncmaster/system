@@ -69,4 +69,4 @@ if (isset($_POST['submit'])) {
 	}
 $smarty->assign('emailErr', $emailErr);
 }
-$smarty->display("forgot.html");
+$smarty->display("../templates/forgot.html");
