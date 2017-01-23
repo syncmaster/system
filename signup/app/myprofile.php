@@ -1,6 +1,6 @@
 <?php
-include 'boot.php';
-require_once '/mail_smarty.php';
+include './app/boot.php';
+
 
 
 $user = array();

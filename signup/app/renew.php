@@ -80,7 +80,7 @@ if (isset($_POST['submit'])) {
 						";
 			$connect->query($sql);	
 		} else {
-			$fail = "We not change your password please back after few hours.";
+			$fail = "We did not change your password please back after few hours.";
 			$smarty->assign("fail", $fail);
 		}
 	}
@@ -88,6 +88,6 @@ if (isset($_POST['submit'])) {
 $smarty->assign("passErr", $passErr);
 }
 
-$smarty->display("renew.html");
+$smarty->display("../templates/renew.html");
 
 

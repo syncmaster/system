@@ -1,5 +1,5 @@
 <?php
-require ("libs/Smarty.class.php");
+require("../libs/smarty/Smarty.class.php");
 $smarty = new Smarty();
 $smarty->error_reporting = error_reporting() &~E_NOTICE;
 session_start();

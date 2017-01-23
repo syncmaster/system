@@ -1,5 +1,5 @@
 <?php
-include 'boot.php';
+include '../app/boot.php';
 include_once 'browser.func.php';
 
 

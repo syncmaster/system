@@ -1,6 +1,6 @@
 <?php
 include("settings.php");
-require("libs/Smarty.class.php");
+require("./libs/smarty/Smarty.class.php");
 @ini_set('session.hash_function', 1);
 @ini_set('session.hash_bits_per_character', 6);
 session_start();
