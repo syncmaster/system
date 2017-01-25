@@ -149,6 +149,8 @@ class AuthUser extends BaseController
 
 	public function login()
 	{
+		global $yourbrowser;
+		global $utcdiff;
 		$this->smarty->assign('title', 'Login');
 		define('TIMEOUT', 5*60);
 
@@ -164,8 +166,6 @@ class AuthUser extends BaseController
 			//Variables in smarty
 			$this->smarty->assign('email', $email);
 			$this->smarty->assign('password', $password);
-			$this->smarty->assign('utcdiff', $utcdiff);
-
 			if (isset($this->session['timeout']) && (time() - $this->session['timeout']) < TIMEOUT) {
 				$emailErr['loginerr'] = "wait ".(TIMEOUT/60)." min(s) for another attempt";
 			} else if (isset($this->session['fail']) && $this->session['fail'] >= 3) {

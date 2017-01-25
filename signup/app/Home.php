@@ -10,8 +10,9 @@ class Home extends BaseController {
 		$user = array();
 		if(isset($this->session['user'])) {
 			$user = $this->session['user'];
+			$utcdiff = $this->session['utcdiff'];
 			$this->smarty->assign('user', $user);
-			$this->smarty->assign('utcdiff', $this->session['utcdiff']);
+			$this->smarty->assign('utcdiff', $utcdiff);
 		}
 
 		if (empty($user)) {

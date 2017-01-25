@@ -8,7 +8,7 @@ require(ROOT . '/libs/phpmail/PHPMailerAutoload.php');
 require(ROOT . '/libs/smarty/Smarty.class.php');
 require(ROOT . '/app/BaseController.php');
 require(ROOT . '/libs/browser.func.php');
-//if (!defined('APPLICATION') || APPLICATION !== 1) exit;
+
 
 @ini_set('session.hash_function', 1);
 @ini_set('session.hash_bits_per_character', 6);
