@@ -346,7 +346,7 @@ class AuthUser extends BaseController
 					if ($_GET['token'] !==$user['tokens']) {
 						$tokenErr = "your link is not valid Back to ->";
 					$this->smarty->assign("tokenErr", $tokenErr);
-					header("refresh: 10, url=forgot.php");
+					header("refresh: 10, url=/auth/forgot");
 					} else {
 						$tokens = $_GET['token'];
 						$this->smarty->assign("tokenkey", $tokens);
