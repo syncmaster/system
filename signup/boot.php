@@ -9,7 +9,6 @@ require(ROOT . '/libs/smarty/Smarty.class.php');
 require(ROOT . '/app/BaseController.php');
 require(ROOT . '/libs/browser.func.php');
 
-
 @ini_set('session.hash_function', 1);
 @ini_set('session.hash_bits_per_character', 6);
 session_start();
@@ -22,6 +21,7 @@ $smarty->assign('URL', URL);
 
 $connect = new mysqli($host_db, $user_db, $password_db, $database);
 mysqli_set_charset($connect, 'UTF8');
+
 if ($connect->connect_error) {
 	echo ("Connection Error:" . $connect->connect_error);
 }
@@ -39,7 +39,6 @@ $mail->FromName = $cfg['mail']['from_name'];
 $mail->addReplyTo = $cfg['mail']['reply'];
 $mail->IsHTML(true);
 $mail->CharSet = $cfg['mail']['charset'];
-
 
 $secret_captcha = $captcha['secret'];
 $public_key_captcha = $captcha['public'];

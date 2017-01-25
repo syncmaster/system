@@ -2,6 +2,7 @@
 
 class AuthUser extends BaseController
 {
+	
 	public function register()
 	{
 		$this->smarty->assign('title', 'Register');
