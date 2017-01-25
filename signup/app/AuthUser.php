@@ -277,7 +277,7 @@ class AuthUser extends BaseController
 			}
 
 			if (!count($emailErr)) {
-				$random = substr(md5(microtime()),rand(0,26));
+				$random = md5(microtime());
 				$sql = "UPDATE users SET
 				`tokens` = '" .$this->db->real_escape_string($random). "',
 				`expire_date` = NOW()
@@ -319,7 +319,12 @@ class AuthUser extends BaseController
 
 		$success = "";
 		$passErr = array();
-
+		if (isset($_GET['token']) && mb_strlen($_GET['token']) !== 32) {
+			$tokenErr = "your link is not valid Back to ->";
+			$this->smarty->assign("tokenErr", $tokenErr);
+			header("refresh: 10, url=forgot.php");
+		}
+		
 		if (!isset($_GET['token'])) {
 			$tokenErr = "your link is not valid Back to ->";
 			$this->smarty->assign("tokenErr", $tokenErr);
