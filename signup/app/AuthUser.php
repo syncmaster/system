@@ -152,7 +152,6 @@ class AuthUser extends BaseController
 	public function login()
 	{
 		global $yourbrowser;
-		global $utcdiff;
 		$this->smarty->assign('title', 'Login');
 		define('TIMEOUT', 5*60);
 
@@ -206,14 +205,12 @@ class AuthUser extends BaseController
 
 							$user = $result->fetch_assoc() ;
 
-
 							if (password_verify($password, $user['password'])) {
 								$loginuser = "Hello, ".$user['firstname']." ".$user['lastname']."\n";
 								$userid = $user['id'];
 								$this->session['user'] = $loginuser;
 								$this->session['utcdiff'] = $utcdiff;
 								$this->smarty->assign('loginuser', $loginuser);
-								$this->smarty->assign('utcdiff', $this->session['utcdiff']);
 								$sql = "
 									INSERT INTO logininfo (
 										`user_id`,
