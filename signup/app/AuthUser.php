@@ -81,7 +81,8 @@ class AuthUser extends BaseController
 			}
 		}
 
-		$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+		global $secret_captcha;
+		$recaptcha_secret = $secret_captcha;
 		$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 		$response = json_decode($response, true);
 
@@ -160,7 +161,8 @@ class AuthUser extends BaseController
 			$password = isset($_POST['password']) ? trim($_POST['password']) : '';
 			$utcdiff = isset($_POST['utcdiff']) ? trim($_POST['utcdiff']) : '';
 			$emailErr = array ();
-			$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+			global $secret_captcha;
+			$recaptcha_secret = $secret_captcha;
 			$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 			$response = json_decode($response, true);
 
@@ -247,7 +249,8 @@ class AuthUser extends BaseController
 
 		if (isset($_POST['submit'])) {
 			$email = isset($_POST['email']) ? trim($_POST['email']) : '' ;
-			$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+			global $secret_captcha;
+			$recaptcha_secret = $secret_captcha;
 			$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 			$response = json_decode($response, true);
 			$reset = "";
@@ -260,10 +263,10 @@ class AuthUser extends BaseController
 			} else if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 				$emailErr['valid'] = "Please enter Valid Email-Address";
 				$this->smarty->assign("emailErr", $emailErr['valid']);
-			} /*else if ($response['success'] === false) {
+			} else if ($response['success'] === false) {
 				$emailErr['captcha'] = "Please fill the captcha";
 				$this->smarty->assign("emailErr", $emailErr['captcha']);
-			} */else {
+			} else {
 				$sql = "SELECT `email`
 					FROM users
 					WHERE
@@ -323,13 +326,13 @@ class AuthUser extends BaseController
 		if (isset($_GET['token']) && mb_strlen($_GET['token']) !== 32) {
 			$tokenErr = "your link is not valid Back to ->";
 			$this->smarty->assign("tokenErr", $tokenErr);
-			header("refresh: 10, url=forgot.php");
+			header("refresh: 10, url=/auth/forgot");
 		}
 		
 		if (!isset($_GET['token'])) {
 			$tokenErr = "your link is not valid Back to ->";
 			$this->smarty->assign("tokenErr", $tokenErr);
-			header("refresh: 10, url=forgot.php");
+			header("refresh: 10, url=/auth/forgot");
 		} else {
 			$sql = "SELECT `tokens`
 					FROM `users`
@@ -340,7 +343,7 @@ class AuthUser extends BaseController
 				if (!$result->num_rows) {
 					$tokenErr = "your link is not valid Back to ->";
 					$this->smarty->assign("tokenErr", $tokenErr);
-					header("refresh: 10, url=forgot.php");
+					header("refresh: 10, url=/auth/forgot");
 				} else {
 					$user = $result->fetch_assoc() ;
 
@@ -360,7 +363,8 @@ class AuthUser extends BaseController
 
 			$password = isset($_POST['password']) ? trim($_POST['password']) : '';
 			$repassword = isset($_POST['repassword']) ? trim($_POST['repassword']) : '';
-			$recaptcha_secret = "6LfpnREUAAAAAPbCRYaQeSCiIZjDhE5I3MRQyEda";
+			global $secret_captcha;
+			$recaptcha_secret = $secret_captcha;
 			$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$recaptcha_secret."&response=".$_POST['g-recaptcha-response']);
 			$response = json_decode($response, true);
 
