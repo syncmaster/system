@@ -1,12 +1,14 @@
 <?php
 
-class BaseController {
+class BaseController
+{
 	protected $smarty;
 	protected $db;
 	protected $mail;
 	protected $session;
 
-	public function __construct($smarty, $db, $mailer) {
+	public function __construct($smarty, $db, $mailer) 
+	{
 		$this->smarty = $smarty;
 		$this->db = $db;
 		$this->mail = $mailer;
